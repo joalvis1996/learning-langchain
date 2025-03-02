@@ -1,7 +1,7 @@
 import { TextLoader } from 'langchain/document_loaders/fs/text';
 import { RecursiveCharacterTextSplitter } from '@langchain/textsplitters';
 
-const loader = new TextLoader('./test.txt'); // or any other loader
+const loader = new TextLoader('./test.txt');
 const docs = await loader.load();
 
 const splitter = new RecursiveCharacterTextSplitter({

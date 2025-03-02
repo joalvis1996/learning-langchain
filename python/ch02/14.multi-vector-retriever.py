@@ -12,30 +12,29 @@ from langchain.retrievers.multi_vector import MultiVectorRetriever
 from langchain.storage import InMemoryStore
 import uuid
 
-connection = "postgresql+psycopg://langchain:langchain@localhost:6024/langchain"
-collection_name = "summaries"
+connection = 'postgresql+psycopg://langchain:langchain@localhost:6024/langchain'
+collection_name = 'summaries'
 embeddings_model = OpenAIEmbeddings()
 
 # 문서 로드
-loader = TextLoader("./test.txt", encoding="utf-8")
+loader = TextLoader('./test.txt', encoding='utf-8')
 docs = loader.load()
 
-print("length of loaded docs: ", len(docs[0].page_content))
+print('length of loaded docs: ', len(docs[0].page_content))
 
 # 문서 분할
 splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
 chunks = splitter.split_documents(docs)
 
 # 나머지 코드는 동일하게 유지
-prompt_text = "다음 문서의 요약을 생성하세요:\n\n{doc}"
+prompt_text = '다음 문서의 요약을 생성하세요:\n\n{doc}'
 
 prompt = ChatPromptTemplate.from_template(prompt_text)
-llm = ChatOpenAI(temperature=0, model="gpt-4o-mini")
+llm = ChatOpenAI(temperature=0, model='gpt-4o-mini')
 summarize_chain = {
-    "doc": lambda x: x.page_content} | prompt | llm | StrOutputParser()
+    'doc': lambda x: x.page_content} | prompt | llm | StrOutputParser()
 
-# 청크에 체인 배치
-summaries = summarize_chain.batch(chunks, {"max_concurrency": 5})
+summaries = summarize_chain.batch(chunks, {'max_concurrency': 5})
 
 # 벡터스토어는 하위 청크를 인덱싱하는 데 사용
 vectorstore = PGVector(
@@ -46,7 +45,7 @@ vectorstore = PGVector(
 )
 # 상위 문서를 위한 스토리지 레이어
 store = InMemoryStore()
-id_key = "doc_id"
+id_key = 'doc_id'
 
 # 원본 문서를 문서 저장소에 보관하면서 벡터 저장소에 요약을 인덱싱
 retriever = MultiVectorRetriever(
@@ -73,13 +72,13 @@ retriever.docstore.mset(list(zip(doc_ids, chunks)))
 
 # 벡터 저장소가 요약을 검색
 sub_docs = retriever.vectorstore.similarity_search(
-    "chapter on philosophy", k=2)
+    'chapter on philosophy', k=2)
 
-print("sub docs: ", sub_docs[0].page_content)
+print('sub docs: ', sub_docs[0].page_content)
 
-print("length of sub docs:\n", len(sub_docs[0].page_content))
+print('length of sub docs:\n', len(sub_docs[0].page_content))
 
-# 반면 retriever는 더 큰 원본 문서 청크를 반환
-retrieved_docs = retriever.invoke("chapter on philosophy")
+# retriever는 더 큰 원본 문서 청크를 반환
+retrieved_docs = retriever.invoke('chapter on philosophy')
 
-print("length of retrieved docs: ", len(retrieved_docs[0].page_content))
+print('length of retrieved docs: ', len(retrieved_docs[0].page_content))

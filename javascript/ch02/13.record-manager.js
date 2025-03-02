@@ -1,17 +1,3 @@
-/** 
-1. Ensure docker is installed and running (https://docs.docker.com/get-docker/)
-2. Run the following command to start the postgres container:
-   
-docker run \
-    --name pgvector-container \
-    -e POSTGRES_USER=langchain \
-    -e POSTGRES_PASSWORD=langchain \
-    -e POSTGRES_DB=langchain \
-    -p 6024:5432 \
-    -d pgvector/pgvector:pg16
-3. Use the connection string below for the postgres container
-*/
-
 import { PostgresRecordManager } from '@langchain/community/indexes/postgres';
 import { index } from 'langchain/indexes';
 import { OpenAIEmbeddings } from '@langchain/openai';
@@ -21,8 +7,8 @@ import { v4 as uuidv4 } from 'uuid';
 const tableName = 'test_langchain';
 const connectionString =
   'postgresql://langchain:langchain@localhost:6024/langchain';
-// Load the document, split it into chunks
 
+// 문서 로드 후 청크로 분할
 const config = {
   postgresConnectionOptions: {
     connectionString,
@@ -41,7 +27,7 @@ const vectorStore = await PGVectorStore.initialize(
   config
 );
 
-// Create a new record manager
+// 레코드 관리자 설정
 const recordManagerConfig = {
   postgresConnectionOptions: {
     connectionString,
@@ -53,7 +39,7 @@ const recordManager = new PostgresRecordManager(
   recordManagerConfig
 );
 
-// Create the schema if it doesn't exist
+// 스키마가 없으면 생성
 await recordManager.createSchema();
 
 const docs = [
@@ -67,20 +53,20 @@ const docs = [
   },
 ];
 
-// the first attempt will index both documents
+// 문서 인덱싱 1회차
 const index_attempt_1 = await index({
   docsSource: docs,
   recordManager,
   vectorStore,
   options: {
-    cleanup: 'incremental', // prevent duplicate documents by id from being indexed
-    sourceIdKey: 'source', // the key in the metadata that will be used to identify the document
+    cleanup: 'incremental', // 문서 중복 방지
+    sourceIdKey: 'source', // 출처를 source_id로 사용
   },
 });
 
 console.log(index_attempt_1);
 
-// the second attempt will skip indexing because the identical documents already exist
+// 문서 인덱싱 2회차, 중복 문서 생성 안 됨
 const index_attempt_2 = await index({
   docsSource: docs,
   recordManager,
@@ -93,7 +79,7 @@ const index_attempt_2 = await index({
 
 console.log(index_attempt_2);
 
-// If we mutate a document, the new version will be written and all old versions sharing the same source will be deleted.
+// 문서를 수정하면 새 버전을 저장하고, 출처가 같은 기존 문서는 삭제
 docs[0].pageContent = 'I modified the first document content';
 const index_attempt_3 = await index({
   docsSource: docs,

@@ -1,7 +1,5 @@
 /** 
-1. Ensure docker is installed and running (https://docs.docker.com/get-docker/)
-2. Run the following command to start the postgres container:
-   
+ 도커 실행 명령어
 docker run \
     --name pgvector-container \
     -e POSTGRES_USER=langchain \
@@ -9,7 +7,6 @@ docker run \
     -e POSTGRES_DB=langchain \
     -p 6024:5432 \
     -d pgvector/pgvector:pg16
-3. Use the connection string below for the postgres container
 */
 
 import { TextLoader } from 'langchain/document_loaders/fs/text';
@@ -18,9 +15,11 @@ import { OpenAIEmbeddings } from '@langchain/openai';
 import { PGVectorStore } from '@langchain/community/vectorstores/pgvector';
 import { v4 as uuidv4 } from 'uuid';
 
+// 도커 연결 설정
 const connectionString =
   'postgresql://langchain:langchain@localhost:6024/langchain';
-// Load the document, split it into chunks
+
+// 문서를 로드 후 분할
 const loader = new TextLoader('./test.txt');
 const raw_docs = await loader.load();
 const splitter = new RecursiveCharacterTextSplitter({
@@ -29,7 +28,7 @@ const splitter = new RecursiveCharacterTextSplitter({
 });
 const docs = await splitter.splitDocuments(raw_docs);
 
-// embed each chunk and insert it into the vector store
+// 문서에 대한 임베딩 생성
 const model = new OpenAIEmbeddings();
 const db = await PGVectorStore.fromDocuments(docs, model, {
   postgresConnectionOptions: {
@@ -37,13 +36,13 @@ const db = await PGVectorStore.fromDocuments(docs, model, {
   },
 });
 
-console.log('Vector store created successfully');
+console.log('벡터 저장소 생성 완료');
 
 const results = await db.similaritySearch('query', 4);
 
-console.log(`Similarity search results: ${JSON.stringify(results)}`);
+console.log(`유사도 검색 결과: ${JSON.stringify(results)}`);
 
-console.log('Adding documents to the vector store');
+console.log('문서를 벡터 스토어에 저장');
 
 const ids = [uuidv4(), uuidv4()];
 
@@ -61,8 +60,8 @@ await db.addDocuments(
   { ids }
 );
 
-console.log('Documents added successfully');
+console.log('문서 저장 성공');
 
 await db.delete({ ids: [ids[1]] });
 
-console.log('second document deleted successfully');
+console.log('문서 삭제 성공');

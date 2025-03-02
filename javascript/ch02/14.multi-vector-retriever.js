@@ -24,10 +24,10 @@ const splitter = new RecursiveCharacterTextSplitter({
 const docs = await splitter.splitDocuments(parentDocuments);
 
 const prompt = PromptTemplate.fromTemplate(
-  `Summarize the following document:\n\n{doc}`
+  `다음 문서의 요약을 생성하세요:\n\n{doc}`
 );
 
-const llm = new ChatOpenAI({ modelName: 'gpt-3.5-turbo' });
+const llm = new ChatOpenAI({ modelName: 'gpt-4o-mini' });
 
 const chain = RunnableSequence.from([
   { doc: (doc) => doc.pageContent },
@@ -36,14 +36,13 @@ const chain = RunnableSequence.from([
   new StringOutputParser(),
 ]);
 
-// batch summarization chain across the chunks
 const summaries = await chain.batch(docs, {
   maxConcurrency: 5,
 });
 
 const idKey = 'doc_id';
 const docIds = docs.map((_) => uuid.v4());
-// create summary docs with metadata linking to the original docs
+// 각 요약은 doc_id를 통해 원본 문서와 연결
 const summaryDocs = summaries.map((summary, i) => {
   const summaryDoc = new Document({
     pageContent: summary,
@@ -54,10 +53,10 @@ const summaryDocs = summaries.map((summary, i) => {
   return summaryDoc;
 });
 
-// The byteStore to use to store the original chunks
+// 기존 청크를 저장할 바이트스토어
 const byteStore = new InMemoryStore();
 
-// vector store for the summaries
+// 요약을 저장할 벡터스토어
 const vectorStore = await PGVectorStore.fromDocuments(
   docs,
   new OpenAIEmbeddings(),
@@ -76,10 +75,10 @@ const retriever = new MultiVectorRetriever({
 
 const keyValuePairs = docs.map((originalDoc, i) => [docIds[i], originalDoc]);
 
-// Use the retriever to add the original chunks to the document store
+// retriever로 청크를 문서저장소에 추가
 await retriever.docstore.mset(keyValuePairs);
 
-// Vectorstore alone retrieves the small chunks
+// 벡터 저장소가 요약을 검색
 const vectorstoreResult = await retriever.vectorstore.similaritySearch(
   'chapter on philosophy',
   2
@@ -89,7 +88,7 @@ console.log(
   `summary retrieved length: ${vectorstoreResult[0].pageContent.length}`
 );
 
-// Retriever returns larger chunk result
+// retriever는 더 큰 원본 문서 청크를 반환
 const retrieverResult = await retriever.invoke('chapter on philosophy');
 console.log(
   `multi-vector retrieved chunk length: ${retrieverResult[0].pageContent.length}`

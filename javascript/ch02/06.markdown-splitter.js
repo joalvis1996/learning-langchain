@@ -1,6 +1,12 @@
 import { RecursiveCharacterTextSplitter } from '@langchain/textsplitters';
 
-const markdownText = ` # 🦜🔗 LangChain ⚡ Building applications with LLMs through composability ⚡ ## Quick Install \`\`\`bash pip install langchain \`\`\` As an open source project in a rapidly developing field, we are extremely open to contributions. `;
+const markdownText = `
+# 🦜🔗 LangChain ⚡ Building applications with LLMs through composability ⚡ 
+## Quick Install 
+\`\`\`bash
+pip install langchain 
+\`\`\` 
+As an open source project in a rapidly developing field, we are extremely open to contributions. `;
 
 const mdSplitter = RecursiveCharacterTextSplitter.fromLanguage('markdown', {
   chunkSize: 60,

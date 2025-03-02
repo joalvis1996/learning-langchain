@@ -4,7 +4,7 @@ const model = new OpenAIEmbeddings();
 const embeddings = await model.embedDocuments([
   'Hi there!',
   'Oh, hello!',
-  "What's your name?",
+  'What\'s your name?',
   'My friends call me World',
   'Hello World!',
 ]);
