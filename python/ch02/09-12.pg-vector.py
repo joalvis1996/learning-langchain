@@ -1,19 +1,3 @@
-"""
-1. Ensure docker is installed and running (https://docs.docker.com/get-docker/)
-2. pip install -qU langchain_postgres
-3. Run the following command to start the postgres container:
-   
-docker run \
-    --name pgvector-container \
-    -e POSTGRES_USER=langchain \
-    -e POSTGRES_PASSWORD=langchain \
-    -e POSTGRES_DB=langchain \
-    -p 6024:5432 \
-    -d pgvector/pgvector:pg16
-4. Use the connection string below for the postgres container
-
-"""
-
 from langchain_community.document_loaders import TextLoader
 from langchain_openai import OpenAIEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
@@ -22,16 +6,16 @@ from langchain_core.documents import Document
 import uuid
 
 
-# See docker command above to launch a postgres instance with pgvector enabled.
+# 도커 연결 설정
 connection = "postgresql+psycopg://langchain:langchain@localhost:6024/langchain"
 
-# Load the document, split it into chunks
+# 문서를 로드 후 분할
 raw_documents = TextLoader('./test.txt', encoding="utf-8").load()
 text_splitter = RecursiveCharacterTextSplitter(
     chunk_size=1000, chunk_overlap=200)
 documents = text_splitter.split_documents(raw_documents)
 
-# Create embeddings for the documents
+# 문서에 대한 임베딩 생성
 embeddings_model = OpenAIEmbeddings()
 
 db = PGVector.from_documents(
@@ -41,7 +25,7 @@ results = db.similarity_search("query", k=4)
 
 print(results)
 
-print("Adding documents to the vector store")
+print("문서를 벡터 스토어에 저장")
 ids = [str(uuid.uuid4()), str(uuid.uuid4())]
 db.add_documents(
     [
@@ -57,11 +41,11 @@ db.add_documents(
     ids=ids,
 )
 
-print("Documents added successfully.\n Fetched documents count:",
+print("문서 저장 성공.\n  전체 문서 수:",
       len(db.get_by_ids(ids)))
 
-print("Deleting document with id", ids[1])
+print("id로 문서 삭제\n  ", ids[1])
 db.delete({"ids": ids})
 
-print("Document deleted successfully.\n Fetched documents count:",
+print("문서 삭제 성공.\n  전체 문서 수:",
       len(db.get_by_ids(ids)))

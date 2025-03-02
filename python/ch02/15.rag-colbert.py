@@ -1,9 +1,9 @@
 """
-- Windows is not supported. RAGatouille doesn't appear to work outside WSL and has issues with WSL1. Some users have had success running RAGatouille in WSL2.
-- Only on python.
-- Read full docs here: https://github.com/AnswerDotAI/RAGatouille/blob/8183aad64a9a6ba805d4066dcab489d97615d316/README.md
+- Windows는 지원되지 않음. RAGatouille는 WSL 외부에서 작동하지 않으며 WSL1에서도 문제가 있음. 일부 사용자들은 WSL2에서 성공적으로 실행했다고 함.
+- 파이썬에서만 사용 가능함.
+- 전체 문서는 여기서 확인할 수 있음: https://github.com/AnswerDotAI/RAGatouille/blob/8183aad64a9a6ba805d4066dcab489d97615d316/README.md
 
-- To install run:
+- 설치하려면 다음 명령어를 실행
 
 ```bash
 pip install -U ragatouille transformers
@@ -17,13 +17,13 @@ RAG = RAGPretrainedModel.from_pretrained("colbert-ir/colbertv2.0")
 
 def get_wikipedia_page(title: str):
     """
-    Retrieve the full text content of a Wikipedia page.
-    :param title: str - Title of the Wikipedia page.
-    :return: str - Full text content of the page as raw string.
+    위키피디아 페이지의 전체 텍스트 내용을 가져옴.
+    :param title: str - 위키피디아 페이지의 제목
+    :return: str - 페이지의 전체 텍스트 내용을 raw 문자열로 반환
     """
-    # Wikipedia API endpoint
+    # 위키피디아 API 엔드포인트
     URL = "https://en.wikipedia.org/w/api.php"
-    # Parameters for the API request
+    # API 요청을 위한 매개변수
     params = {
         "action": "query",
         "format": "json",
@@ -31,28 +31,28 @@ def get_wikipedia_page(title: str):
         "prop": "extracts",
         "explaintext": True,
     }
-    # Custom User-Agent header to comply with Wikipedia's best practices
+    # 위키피디아의 모범 사례를 준수하기 위한 사용자 정의 User-Agent 헤더
     headers = {"User-Agent": "RAGatouille_tutorial/0.0.1"}
     response = requests.get(URL, params=params, headers=headers)
     data = response.json()
-    # Extracting page content
+    # 페이지 내용 추출
     page = next(iter(data["query"]["pages"].values()))
     return page["extract"] if "extract" in page else None
 
 
 full_document = get_wikipedia_page("Hayao_Miyazaki")
-# Create an index
+# 인덱스 생성
 RAG.index(
     collection=[full_document],
     index_name="Miyazaki-123",
     max_document_length=180,
     split_documents=True,
 )
-# query
+# 쿼리
 results = RAG.search(query="What animation studio did Miyazaki found?", k=3)
 
 print(results)
 
-# Alternative: Utilize langchain retriever
+# 랭체인의 리트리버 사용
 retriever = RAG.as_langchain_retriever(k=3)
 retriever.invoke("What animation studio did Miyazaki found?")

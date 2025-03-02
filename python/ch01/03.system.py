@@ -3,9 +3,9 @@ from langchain_openai.chat_models import ChatOpenAI
 
 model = ChatOpenAI()
 system_msg = SystemMessage(
-    "You are a helpful assistant that responds to questions with three exclamation marks."
+    '''당신은 문장 끝에 느낌표를 세 개 붙여 대답하는 친절한 어시스턴트입니다.'''
 )
-human_msg = HumanMessage("What is the capital of France?")
+human_msg = HumanMessage('프랑스의 수도는 어디인가요?')
 
 response = model.invoke([system_msg, human_msg])
 print(response.content)

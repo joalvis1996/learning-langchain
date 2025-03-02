@@ -20,6 +20,7 @@ def chatbot(values):
     for token in model.stream(prompt):
         yield token
 
-
-for part in chatbot.stream({"question": "Which model providers offer LLMs?"}):
+for part in chatbot.stream({
+    'question': '거대 언어 모델은 어디서 제공하나요?'
+}):
     print(part)

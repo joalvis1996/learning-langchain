@@ -19,7 +19,7 @@ async def chatbot(values):
 
 
 async def main():
-    return await chatbot.ainvoke({"question": "Which model providers offer LLMs?"})
+    return await chatbot.ainvoke({'question': '거대 언어 모델은 어디서 제공하나요?'})
 
 if __name__ == "__main__":
     import asyncio

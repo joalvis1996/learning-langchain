@@ -20,10 +20,10 @@ record_manager = SQLRecordManager(
     db_url="postgresql+psycopg://langchain:langchain@localhost:6024/langchain",
 )
 
-# Create the schema if it doesn't exist
+# 스키마가 없으면 생성
 record_manager.create_schema()
 
-# Create documents
+# 문서 생성
 docs = [
     Document(page_content='there are cats in the pond', metadata={
              "id": 1, "source": "cats.txt"}),
@@ -31,18 +31,18 @@ docs = [
              "id": 2, "source": "ducks.txt"}),
 ]
 
-# Index the documents
+# 문서 인덱싱 1회차
 index_1 = index(
     docs,
     record_manager,
     vectorstore,
-    cleanup="incremental",  # prevent duplicate documents
-    source_id_key="source",  # use the source field as the source_id
+    cleanup="incremental",  # 문서 중복 방지
+    source_id_key="source",  # 출처를 source_id로 사용
 )
 
-print("Index attempt 1:", index_1)
+print("인덱싱 1회차:", index_1)
 
-# second time you attempt to index, it will not add the documents again
+# 문서 인덱싱 2회차, 중복 문서 생성 안 됨
 index_2 = index(
     docs,
     record_manager,
@@ -51,9 +51,9 @@ index_2 = index(
     source_id_key="source",
 )
 
-print("Index attempt 2:", index_2)
+print("인덱싱 2회차:", index_2)
 
-# If we mutate a document, the new version will be written and all old versions sharing the same source will be deleted.
+# 문서를 수정하면 새 버전을 저장하고, 출처가 같은 기존 문서는 삭제
 
 docs[0].page_content = "I just modified this document!"
 
@@ -65,4 +65,4 @@ index_3 = index(
     source_id_key="source",
 )
 
-print("Index attempt 3:", index_3)
+print("인덱싱 3회차:", index_3)
