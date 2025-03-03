@@ -7,32 +7,31 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import chain
 
 
-# See docker command above to launch a postgres instance with pgvector enabled.
-connection = "postgresql+psycopg://langchain:langchain@localhost:6024/langchain"
+connection = 'postgresql+psycopg://langchain:langchain@localhost:6024/langchain'
 
-# Load the document, split it into chunks
+# 문서를 로드 후 분할
 raw_documents = TextLoader('./test.txt', encoding='utf-8').load()
 text_splitter = RecursiveCharacterTextSplitter(
     chunk_size=1000, chunk_overlap=200)
 documents = text_splitter.split_documents(raw_documents)
 
-# Create embeddings for the documents
+# 문서에 대한 임베딩 생성
 embeddings_model = OpenAIEmbeddings()
 
 db = PGVector.from_documents(
     documents, embeddings_model, connection=connection)
 
-# create retriever to retrieve 2 relevant documents
-retriever = db.as_retriever(search_kwargs={"k": 5})
+# 벡터 스토어에서 5개의 관련 문서 검색
+retriever = db.as_retriever(search_kwargs={'k': 5})
 
-# instruction to generate multiple queries
+# 다중 쿼리를 위한 프롬프트
 perspectives_prompt = ChatPromptTemplate.from_template(
-    """You are an AI language model assistant. Your task is to generate five different versions of the given user question to retrieve relevant documents from a vector database. 
-    By generating multiple perspectives on the user question, your goal is to help the user overcome some of the limitations of the distance-based  similarity search. 
-    Provide these alternative questions separated by newlines. 
-    Original question: {question}""")
+    '''당신은 AI 언어 모델 어시스턴트입니다. 주어진 사용자 질문의 다섯 가지 버전을 생성하여 벡터 데이터베이스에서 관련 문서를 검색하세요. 
+    사용자 질문에 대한 다양한 관점을 생성함으로써 사용자가 거리 기반 유사도 검색의 한계를 극복할 수 있도록 돕는 것이 목표입니다. 
+    이러한 대체 질문을 개행으로 구분하여 제공하세요. 
+    원래 질문: {question}''')
 
-llm = ChatOpenAI(model="gpt-3.5-turbo")
+llm = ChatOpenAI(model='gpt-4o-mini')
 
 
 def parse_queries_output(message):
@@ -43,33 +42,37 @@ query_gen = perspectives_prompt | llm | parse_queries_output
 
 
 def get_unique_union(document_lists):
-    # Flatten list of lists, and dedupe them
+    # 리스트의 리스트를 평탄화하고 중복을 제거
     deduped_docs = {
         doc.page_content: doc for sublist in document_lists for doc in sublist}
-    # return a flat list of unique docs
+    # 고유한 문서만 반환
     return list(deduped_docs.values())
 
 
 retrieval_chain = query_gen | retriever.batch | get_unique_union
 
 prompt = ChatPromptTemplate.from_template(
-    """Answer the question based only on the following context: {context} Question: {question} """
+    '''
+다음 컨텍스트만 사용해 질문에 답하세요.
+컨텍스트:{context}
+
+질문: {question}
+'''
 )
 
-query = "Who are the key figures in the ancient greek history of philosophy?"
+query = '고대 그리스 철학사의 주요 인물은 누구인가요?'
 
 
 @chain
 def multi_query_qa(input):
-    # fetch relevant documents
-    docs = retrieval_chain.invoke(input)  # format prompt
+    docs = retrieval_chain.invoke(input)
     formatted = prompt.invoke(
-        {"context": docs, "question": input})  # generate answer
+        {'context': docs, 'question': input})  
     answer = llm.invoke(formatted)
     return answer
 
 
 # run
-print("Running multi query qa\n")
+print('다중 쿼리 검색\n')
 result = multi_query_qa.invoke(query)
 print(result.content)

@@ -22,7 +22,7 @@ import { RunnableLambda } from '@langchain/core/runnables';
 
 const connectionString =
   'postgresql://langchain:langchain@localhost:6024/langchain';
-// Load the document, split it into chunks
+
 const loader = new TextLoader('./test.txt');
 const raw_docs = await loader.load();
 const splitter = new RecursiveCharacterTextSplitter({
@@ -31,7 +31,6 @@ const splitter = new RecursiveCharacterTextSplitter({
 });
 const splitDocs = await splitter.splitDocuments(raw_docs);
 
-// embed each chunk and insert it into the vector store
 const model = new OpenAIEmbeddings();
 
 const db = await PGVectorStore.fromDocuments(splitDocs, model, {
@@ -40,41 +39,47 @@ const db = await PGVectorStore.fromDocuments(splitDocs, model, {
   },
 });
 
-// retrieve 2 relevant documents from the vector store
-const retriever = db.asRetriever({ k: 2 });
-/**
- * Provide retrieved docs as context to the LLM to answer a user's question
- */
-const llm = new ChatOpenAI({ temperature: 0, modelName: 'gpt-3.5-turbo' });
+// 벡터 스토어에서 5개의 관련 문서 검색
+const retriever = db.asRetriever({ k: 5 });
 
-const hydePrompt = ChatPromptTemplate.fromTemplate(
-  `Please write a passage to answer the question.\n Question: {question} \n Passage:`
+const llm = new ChatOpenAI({ temperature: 0, modelName: 'gpt-4o-mini' });
+
+const perspectivesPrompt = ChatPromptTemplate.fromTemplate(
+  `당신은 AI 언어 모델 어시스턴트입니다. 주어진 사용자 질문의 다섯 가지 버전을 생성하여 벡터 데이터베이스에서 관련 문서를 검색하세요. 사용자 질문에 대한 다양한 관점을 생성함으로써 사용자가 거리 기반 유사도 검색의 한계를 극복할 수 있도록 돕는 것이 목표입니다. 이러한 대체 질문을 개행으로 구분하여 제공하세요. 원래 질문: {question}`
 );
 
-const generatedDoc = hydePrompt.pipe(llm).pipe((msg) => msg.content);
+const queryGen = perspectivesPrompt.pipe(llm).pipe((message) => {
+  return message.content.split('\n');
+});
 
-/**
- * This chain retrieves and combines the documents from the vector store for each query
- */
-const retrievalChain = generatedDoc.pipe(retriever);
+
+const retrievalChain = queryGen
+  .pipe(retriever.batch.bind(retriever))
+  .pipe((documentLists) => {
+    const dedupedDocs = {};
+    documentLists.flat().forEach((doc) => {
+      dedupedDocs[doc.pageContent] = doc;
+    });
+    return Object.values(dedupedDocs);
+  });
 
 const prompt = ChatPromptTemplate.fromTemplate(
-  'Answer the question based only on the following context:\n {context}\n\nQuestion: {question}'
+  '다음 컨텍스트만 사용해 질문에 답변하세요.\n 컨텍스트: {context}\n\n질문: {question}'
 );
 
-console.log('Running hyde\n');
-const hydeQa = RunnableLambda.from(async (input) => {
-  // fetch relevant documents
-  const docs = await retrievalChain.invoke(input);
-  // format prompt
+console.log('다중 쿼리 검색\n');
+const multiQueryQa = RunnableLambda.from(async (input) => {
+  // 관련 문서 검색
+  const docs = await retrievalChain.invoke({ question: input });
+  // 프롬프트 포매팅
   const formatted = await prompt.invoke({ context: docs, question: input });
-  // generate answer
+  // 답변 생성
   const answer = await llm.invoke(formatted);
   return answer;
 });
 
-const result = await hydeQa.invoke(
-  'Who are some lesser known philosophers in the ancient greek history of philosophy?'
+const result = await multiQueryQa.invoke(
+  '고대 그리스 철학사의 주요 인물은 누구인가요?'
 );
 
 console.log(result);

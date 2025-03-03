@@ -7,56 +7,60 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import chain
 from langchain_core.output_parsers import StrOutputParser
 
-# See docker command above to launch a postgres instance with pgvector enabled.
-connection = "postgresql+psycopg://langchain:langchain@localhost:6024/langchain"
+connection = 'postgresql+psycopg://langchain:langchain@localhost:6024/langchain'
 
-# Load the document, split it into chunks
+# 문서를 로드 후 분할
 raw_documents = TextLoader('./test.txt', encoding='utf-8').load()
 text_splitter = RecursiveCharacterTextSplitter(
     chunk_size=1000, chunk_overlap=200)
 documents = text_splitter.split_documents(raw_documents)
 
-# Create embeddings for the documents
+# 문서에 대한 임베딩 생성
 embeddings_model = OpenAIEmbeddings()
 
 db = PGVector.from_documents(
     documents, embeddings_model, connection=connection)
 
-# create retriever to retrieve 2 relevant documents
-retriever = db.as_retriever(search_kwargs={"k": 5})
+# 벡터 스토어에서 5개의 관련 문서 검색
+retriever = db.as_retriever(search_kwargs={'k': 5})
 
 prompt_hyde = ChatPromptTemplate.from_template(
-    """Please write a passage to answer the question.\n Question: {question} \n Passage:""")
+    '''
+질문에 답할 구절을 영문으로 작성해 주세요.
+질문: {question}
+
+구절:''')
 
 generate_doc = (prompt_hyde | ChatOpenAI(temperature=0) | StrOutputParser())
 
-"""
-Next, we take the hypothetical document generated above and use it as input to the retriever, 
-which will generate its embedding and search for similar documents in the vector store:
-"""
+'''
+위에서 생성한 가상 문서를 검색의 입력으로 사용하여 임베딩을 생성하고 벡터 스토어에서 유사한 문서를 검색
+'''
 retrieval_chain = generate_doc | retriever
 
-query = "Who are some lesser known philosophers in the ancient greek history of philosophy?"
+query = '고대 그리스 철학사에서 잘 알려지지 않은 철학자는 누구인가요?'
 
 prompt = ChatPromptTemplate.from_template(
-    """Answer the question based only on the following context: {context} Question: {question} """
+    '''
+다음 컨텍스트만 사용해 질문에 답하세요.
+컨텍스트:{context}
+
+질문: {question}
+'''
 )
 
-llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0)
+llm = ChatOpenAI(model='gpt-4o-mini', temperature=0)
 
 
 @chain
 def qa(input):
-    # fetch relevant documents from the hyde retrieval chain defined earlier
     docs = retrieval_chain.invoke(input)
-    # format prompt
-    formatted = prompt.invoke({"context": docs, "question": input})
-    # generate answer
+    formatted = prompt.invoke({'context': docs, 'question': input})
     answer = llm.invoke(formatted)
     return answer
 
 
-print("Running hyde\n")
+print('HyDE 실행\n')
 result = qa.invoke(query)
-print("\n\n")
+print('\n\n')
 print(result.content)

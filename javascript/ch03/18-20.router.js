@@ -12,8 +12,8 @@ const routeQuery = z
   })
   .describe('Route a user query to the most relevant datasource.');
 
-const llm = new ChatOpenAI({ model: 'gpt-3.5-turbo', temperature: 0 });
-// withStructuredOutput is a method that allows us to use the structured output of the model
+const llm = new ChatOpenAI({ model: 'gpt-4o-mini', temperature: 0 });
+
 const structuredLlm = llm.withStructuredOutput(routeQuery, {
   name: 'RouteQuery',
 });
@@ -21,14 +21,14 @@ const structuredLlm = llm.withStructuredOutput(routeQuery, {
 const prompt = ChatPromptTemplate.fromMessages([
   [
     'system',
-    `You are an expert at routing a user question to the appropriate data source. Based on the programming language the question is referring to, route it to the relevant data source.`,
+    `당신은 사용자 질문을 적절한 데이터 소스로 라우팅하는 전문가입니다. 질문이 지목하는 프로그래밍 언어에 따라 해당 데이터 소스로 라우팅하세요.`,
   ],
   ['human', '{question}'],
 ]);
 
 const router = prompt.pipe(structuredLlm);
 
-const question = `Why doesn't the following code work: 
+const question = `이 코드가 안 돌아가는 이유를 설명해주세요: 
 from langchain_core.prompts 
 import ChatPromptTemplate 
 prompt = ChatPromptTemplate.from_messages(["human", "speak in {language}"]) 
@@ -37,8 +37,6 @@ prompt.invoke("french") `;
 const result = await router.invoke({ question });
 
 console.log('Routing to: ', result);
-
-/** Once we’ve extracted the relevant data source, we can pass the value into another function to execute additional logic as required: */
 
 const chooseRoute = (result) => {
   if (result.datasource.toLowerCase().includes('python_docs')) {

@@ -1,17 +1,3 @@
-/** 
-1. Ensure docker is installed and running (https://docs.docker.com/get-docker/)
-2. Run the following command to start the postgres container:
-   
-docker run \
-    --name pgvector-container \
-    -e POSTGRES_USER=langchain \
-    -e POSTGRES_PASSWORD=langchain \
-    -e POSTGRES_DB=langchain \
-    -p 6024:5432 \
-    -d pgvector/pgvector:pg16
-3. Use the connection string below for the postgres container
-*/
-
 import { TextLoader } from 'langchain/document_loaders/fs/text';
 import { RecursiveCharacterTextSplitter } from '@langchain/textsplitters';
 import { OpenAIEmbeddings } from '@langchain/openai';
@@ -21,7 +7,8 @@ import { ChatOpenAI } from '@langchain/openai';
 import { RunnableLambda } from '@langchain/core/runnables';
 const connectionString =
   'postgresql://langchain:langchain@localhost:6024/langchain';
-// Load the document, split it into chunks
+
+// 문서를 로드 후 분할
 const loader = new TextLoader('./test.txt');
 const raw_docs = await loader.load();
 const splitter = new RecursiveCharacterTextSplitter({
@@ -30,7 +17,7 @@ const splitter = new RecursiveCharacterTextSplitter({
 });
 const splitDocs = await splitter.splitDocuments(raw_docs);
 
-// embed each chunk and insert it into the vector store
+// 각 청크를 임베딩하고 벡터 저장소에 삽입
 const model = new OpenAIEmbeddings();
 
 const db = await PGVectorStore.fromDocuments(splitDocs, model, {
@@ -39,27 +26,27 @@ const db = await PGVectorStore.fromDocuments(splitDocs, model, {
   },
 });
 
-// retrieve 2 relevant documents from the vector store
+// 벡터 스토어에서 2개의 관련 문서 검색
 const retriever = db.asRetriever({ k: 2 });
 
 const query =
-  'Who are the key figures in the ancient greek history of philosophy?';
+  '고대 그리스 철학사의 주요 인물은 누구인가요?';
 
-// fetch relevant documents
+// 관련 문서 받아오기
 const docs = await retriever.invoke(query);
 
 console.log(
-  `fetched document based on similarity search query:\n ${docs[0].pageContent}\n\n`
+  `유사도 검색 결과:\n ${docs[0].pageContent}\n\n`
 );
 
 /**
- * Provide retrieved docs as context to the LLM to answer a user's question
+ * 검색된 문서를 LLM에 제공하여 사용자의 질문에 답변
  */
 const prompt = ChatPromptTemplate.fromTemplate(
-  'Answer the question based only on the following context:\n {context}\n\nQuestion: {question}'
+  '다음 컨텍스트만 사용해 질문에 답변하세요.\n 컨텍스트: {context}\n\n질문: {question}'
 );
 
-const llm = new ChatOpenAI({ temperature: 0, modelName: 'gpt-3.5-turbo' });
+const llm = new ChatOpenAI({ temperature: 0, modelName: 'gpt-4o-mini' });
 const chain = prompt.pipe(llm);
 
 const result = await chain.invoke({
@@ -70,17 +57,17 @@ const result = await chain.invoke({
 console.log(result);
 console.log('\n\n');
 
-// run again but this time encapsulate the logic for efficiency
+// 이번에는 효율성을 위해 로직을 캡슐화한 후 재실행.
 
 console.log(
-  'Running again but this time encapsulate the logic for efficiency\n'
+  '이번에는 효율성을 위해 로직을 캡슐화한 후 재실행\n'
 );
 const qa = RunnableLambda.from(async (input) => {
-  // fetch relevant documents
+  // 관련 문서 검색
   const docs = await retriever.invoke(input);
-  // format prompt
+  // 프롬프트 포매팅
   const formatted = await prompt.invoke({ context: docs, question: input });
-  // generate answer
+  // 답변 생성
   const answer = await llm.invoke(formatted);
   return answer;
 });

@@ -1,4 +1,4 @@
-"""
+'''
 1. Ensure docker is installed and running (https://docs.docker.com/get-docker/)
 2. pip install -qU langchain_postgres
 3. Run the following command to start the postgres container:
@@ -12,7 +12,7 @@ docker run \
     -d pgvector/pgvector:pg16
 4. Use the connection string below for the postgres container
 
-"""
+'''
 
 from langchain_community.document_loaders import TextLoader
 from langchain_openai import OpenAIEmbeddings
@@ -23,67 +23,79 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import chain
 
 
-# See docker command above to launch a postgres instance with pgvector enabled.
-connection = "postgresql+psycopg://langchain:langchain@localhost:6024/langchain"
+connection = 'postgresql+psycopg://langchain:langchain@localhost:6024/langchain'
 
-# Load the document, split it into chunks
+# 문서를 로드 후 분할
 raw_documents = TextLoader('./test.txt', encoding='utf-8').load()
 text_splitter = RecursiveCharacterTextSplitter(
     chunk_size=1000, chunk_overlap=200)
 documents = text_splitter.split_documents(raw_documents)
 
-# Create embeddings for the documents
+# 문서에 대한 임베딩 생성
 embeddings_model = OpenAIEmbeddings()
 
 db = PGVector.from_documents(
     documents, embeddings_model, connection=connection)
 
-# create retriever to retrieve 2 relevant documents
-retriever = db.as_retriever(search_kwargs={"k": 2})
+# 벡터 스토어에서 2개의 관련 문서 검색
+retriever = db.as_retriever(search_kwargs={'k': 2})
 
-# Query starts with irrelevant information before asking the relevant question
-query = 'Today I woke up and brushed my teeth, then I sat down to read the news. But then I forgot the food on the cooker. Who are some key figures in the ancient greek history of philosophy?'
+# 관련 질문을 하기 전에 관련 없는 정보로 시작하는 쿼리
+query = '일어나서 이를 닦고 뉴스를 읽었어요. 그러다 전자레인지에 음식을 넣어둔 걸 깜빡했네요. 고대 그리스 철학사의 주요 인물은 누구인가요?'
 
-# fetch relevant documents
+# 관련 문서 받아오기
 docs = retriever.invoke(query)
 
 print(docs[0].page_content)
-print("\n\n")
+print('\n\n')
 
 prompt = ChatPromptTemplate.from_template(
-    """Answer the question based only on the following context: {context} Question: {question} """
+    '''다음 컨텍스트만 사용해 질문에 답하세요.
+컨텍스트:{context}
+
+질문: {question}
+'''
 )
-llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0)
+
+llm = ChatOpenAI(model_name='gpt-4o-mini', temperature=0)
 
 
-# Run again but this time encapsulate the logic for efficiency
+# 이번에는 효율성을 위해 로직을 캡슐화한 후 재실행.
 
-# @chain decorator transforms this function into a LangChain runnable,
-# making it compatible with LangChain's chain operations and pipeline
+# 데코레이터 @chain는 이 함수를 LangChain runnable로 변환하여
+# LangChain의 chain 작업과 파이프라인과 호환되게 함
 
 @chain
 def qa(input):
-    # fetch relevant documents
+    # 관련 문서 검색
     docs = retriever.invoke(input)
-    # format prompt
-    formatted = prompt.invoke({"context": docs, "question": input})
-    # generate answer
+    # 프롬프트 포매팅
+    formatted = prompt.invoke({'context': docs, 'question': input})
+    # 답변 생성
     answer = llm.invoke(formatted)
     return answer
 
 
-# run it
+# 실행
 result = qa.invoke(query)
 print(result.content)
 
-print("\nRewrite the query to improve accuracy\n")
+
+# 쿼리를 재작성하여 정확도를 높이기
+print('\n정확도를 높이기 위해 쿼리를 재작성\n')
 
 rewrite_prompt = ChatPromptTemplate.from_template(
-    """Provide a better search query for web search engine to answer the given question, end the queries with ’**’. Question: {x} Answer:""")
+    '''
+웹 검색 엔진이 주어진 질문에 답할 수 있도록 더 나은 영문 검색어를 제공하세요. 쿼리는 \'**\'로 끝내세요. 
+
+질문: {x} 
+
+답변:
+''')
 
 
 def parse_rewriter_output(message):
-    return message.content.strip('"').strip("**")
+    return message.content.strip('\'').strip('**')
 
 
 rewriter = rewrite_prompt | llm | parse_rewriter_output
@@ -91,20 +103,20 @@ rewriter = rewrite_prompt | llm | parse_rewriter_output
 
 @chain
 def qa_rrr(input):
-    # rewrite the query
+    # 쿼리 재작성
     new_query = rewriter.invoke(input)
-    print("Rewritten query: ", new_query)
-    # fetch relevant documents
+    print('재작성한 쿼리: ', new_query)
+    # 관련 문서 검색
     docs = retriever.invoke(new_query)
-    # format prompt
-    formatted = prompt.invoke({"context": docs, "question": input})
-    # generate answer
+    # 프롬프트 포매팅
+    formatted = prompt.invoke({'context': docs, 'question': input})
+    # 답변 생성
     answer = llm.invoke(formatted)
     return answer
 
 
-print("\nCall model again with rewritten query\n")
+print('\n재작성한 쿼리로 모델 호출\n')
 
-# call model again with rewritten query
+# 재작성한 쿼리로 재실행
 result = qa_rrr.invoke(query)
 print(result.content)

@@ -1,6 +1,9 @@
 {
   "dependencies": {
     "cheerio": "^1.0.0",
-    "pdf-parse": "^1.1.1"
+    "pdf-parse": "^1.1.1",
+    "peggy": "^4.2.0",
+    "sqlite3": "^5.1.7",
+    "typeorm": "^0.3.21"
   }
 }

@@ -1,13 +1,12 @@
 /*
-The below example will use a SQLite connection with the Chinook database, which is a sample database that represents a digital media store. Follow these installation steps to create Chinook.db in the same directory as this notebook. You can also download and build the database via the command line:
+이번 예시에서는 sqlite를 통해 Chinook_Sqlite.sql를 사용한다. 실습 실행 전에 sqlite와 sql 파일을 다운받아야 한다.
 
 ```bash
 curl -s https://raw.githubusercontent.com/lerocha/chinook-database/master/ChinookDatabase/DataSources/Chinook_Sqlite.sql | sqlite3 Chinook.db
 
 ```
 
-Afterwards, place `Chinook.db` in the same directory where this code is running.
-
+`Chinook.db`를 코드를 실행할 디렉터리에 옮긴다.
 */
 
 import { ChatOpenAI } from '@langchain/openai';
@@ -18,23 +17,21 @@ import { QuerySqlTool } from 'langchain/tools/sql';
 
 const datasource = new DataSource({
   type: 'sqlite',
-  database: 'Chinook.db', //this should be the path to the db
+  database: 'Chinook.db',
 });
 const db = await SqlDatabase.fromDataSourceParams({
   appDataSource: datasource,
 });
-//test that the db is working
-await db.run('SELECT * FROM Artist LIMIT 10;');
 
 const llm = new ChatOpenAI({ modelName: 'gpt-4o', temperature: 0 });
-// convert question to sql query
+// 질문을 SQL 쿼리로 변환
 const writeQuery = await createSqlQueryChain({ llm, db, dialect: 'sqlite' });
-// execute query
+// SQL 쿼리 실행
 const executeQuery = new QuerySqlTool(db);
-// combined
+// 체인 구성
 const chain = writeQuery.pipe(executeQuery);
 
 const result = await chain.invoke({
-  question: 'How many employees are there?',
+  question: '직원(employee)은 모두 몇 명인가요?',
 });
 console.log(result);

@@ -21,7 +21,7 @@ import { ChatOpenAI } from '@langchain/openai';
 import { RunnableLambda } from '@langchain/core/runnables';
 const connectionString =
   'postgresql://langchain:langchain@localhost:6024/langchain';
-// Load the document, split it into chunks
+// 문서를 로드 후 분할
 const loader = new TextLoader('./test.txt');
 const raw_docs = await loader.load();
 const splitter = new RecursiveCharacterTextSplitter({
@@ -30,7 +30,7 @@ const splitter = new RecursiveCharacterTextSplitter({
 });
 const splitDocs = await splitter.splitDocuments(raw_docs);
 
-// embed each chunk and insert it into the vector store
+// 문서에 대한 임베딩 생성
 const model = new OpenAIEmbeddings();
 
 const db = await PGVectorStore.fromDocuments(splitDocs, model, {
@@ -39,47 +39,49 @@ const db = await PGVectorStore.fromDocuments(splitDocs, model, {
   },
 });
 
-// retrieve 2 relevant documents from the vector store
+// 관련 문서 2개를 검색하는 검색기
 const retriever = db.asRetriever({ k: 2 });
 
 /**
- * Query starts with irrelevant information before asking the relevant question
+ * 관련 질문을 하기 전에 관련 없는 정보로 시작하는 쿼리
  */
 const query =
-  'Today I woke up and brushed my teeth, then I sat down to read the news. But then I forgot the food on the cooker. Who are some key figures in the ancient greek history of philosophy?';
+  '일어나서 이를 닦고 뉴스를 읽었어요. 그러다 전자레인지에 음식을 넣어둔 걸 깜빡했네요. 고대 그리스 철학사의 주요 인물은 누구인가요?';
 /**
- * Provide retrieved docs as context to the LLM to answer a user's question
+ * 관련 문서를 컨텍스트로 제공하여 사용자의 질문에 답변
  */
 const prompt = ChatPromptTemplate.fromTemplate(
-  'Answer the question based only on the following context:\n {context}\n\nQuestion: {question}'
+  '다음 컨텍스트만 사용해 질문에 답변하세요.\n 컨텍스트: {context}\n\n질문: {question}'
 );
 
-const llm = new ChatOpenAI({ temperature: 0, modelName: 'gpt-3.5-turbo' });
+const llm = new ChatOpenAI({ temperature: 0, modelName: 'gpt-4o-mini' });
 
 const qa = RunnableLambda.from(async (input) => {
-  // fetch relevant documents
+  // 관련 문서 검색
   const docs = await retriever.invoke(input);
-  // format prompt
+  // 프롬프트 포매팅
   const formatted = await prompt.invoke({ context: docs, question: input });
-  // generate answer
+  // 답변 생성
   const answer = await llm.invoke(formatted);
   return { answer, docs };
 });
 
 const result = await qa.invoke(query);
 console.log(result);
-console.log('\n\nCall model again with rewritten query\n\n');
+console.log('\n\n정확도를 높이기 위해 쿼리를 재작성\n\n');
 
 const rewritePrompt = ChatPromptTemplate.fromTemplate(
-  `Provide a better search query for web search engine to answer the given question, end the queries with '**'. Question: {question} Answer:`
+  `웹 검색 엔진이 주어진 질문에 답할 수 있도록 더 나은 영문 검색어를 제공하세요. 쿼리는 '**'로 끝내세요.\n\n 질문: {question} 답변:`
 );
+
 const rewriter = rewritePrompt.pipe(llm).pipe((message) => {
   return message.content.replaceAll('"', '').replaceAll('**');
 });
+
 const rewriterQA = RunnableLambda.from(async (input) => {
-  const newQuery = await rewriter.invoke({ question: input }); // fetch relevant documents  console.log('New query: ', newQuery);
-  const docs = await retriever.invoke(newQuery); // format prompt
-  const formatted = await prompt.invoke({ context: docs, question: input }); // generate answer
+  const newQuery = await rewriter.invoke({ question: input }); 
+  const docs = await retriever.invoke(newQuery); 
+  const formatted = await prompt.invoke({ context: docs, question: input }); 
   const answer = await llm.invoke(formatted);
   return answer;
 });
