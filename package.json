@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@langchain/langgraph": "^0.2.52",
     "cheerio": "^1.0.0",
     "pdf-parse": "^1.1.1",
     "peggy": "^4.2.0",
