@@ -1,14 +1,14 @@
-import { DuckDuckGoSearch } from "@langchain/community/tools/duckduckgo_search";
-import { Calculator } from "@langchain/community/tools/calculator";
-import { AIMessage, HumanMessage } from "@langchain/core/messages";
+import { DuckDuckGoSearch } from '@langchain/community/tools/duckduckgo_search';
+import { Calculator } from '@langchain/community/tools/calculator';
+import { AIMessage, HumanMessage } from '@langchain/core/messages';
 import {
   StateGraph,
   Annotation,
   messagesStateReducer,
   START,
-} from "@langchain/langgraph";
-import { ToolNode, toolsCondition } from "@langchain/langgraph/prebuilt";
-import { ChatOpenAI } from "@langchain/openai";
+} from '@langchain/langgraph';
+import { ToolNode, toolsCondition } from '@langchain/langgraph/prebuilt';
+import { ChatOpenAI } from '@langchain/openai';
 
 const search = new DuckDuckGoSearch();
 const calculator = new Calculator();
@@ -22,12 +22,12 @@ const annotation = Annotation.Root({
 async function firstModelNode(state) {
   const query = state.messages[state.messages.length - 1].content;
   const searchToolCall = {
-    name: "duckduckgo_search",
+    name: 'duckduckgo_search',
     args: { query },
     id: Math.random().toString(),
   };
   return {
-    messages: [new AIMessage({ content: "", tool_calls: [searchToolCall] })],
+    messages: [new AIMessage({ content: '', tool_calls: [searchToolCall] })],
   };
 }
 
@@ -37,21 +37,21 @@ async function modelNode(state) {
 }
 
 const builder = new StateGraph(annotation)
-  .addNode("first_model", firstModelNode)
-  .addNode("model", modelNode)
-  .addNode("tools", new ToolNode(tools))
-  .addEdge(START, "first_model")
-  .addEdge("first_model", "tools")
-  .addEdge("tools", "model")
-  .addConditionalEdges("model", toolsCondition);
+  .addNode('first_model', firstModelNode)
+  .addNode('model', modelNode)
+  .addNode('tools', new ToolNode(tools))
+  .addEdge(START, 'first_model')
+  .addEdge('first_model', 'tools')
+  .addEdge('tools', 'model')
+  .addConditionalEdges('model', toolsCondition);
 
 const graph = builder.compile();
 
-// Example usage
+// 예시
 const input = {
   messages: [
     new HumanMessage(
-      "How old was the 30th president of the United States when he died?",
+      '미국의 제30대 대통령이 사망했을 때 몇 살이었나요?',
     ),
   ],
 };

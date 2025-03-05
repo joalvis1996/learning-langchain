@@ -1,19 +1,20 @@
-import { DuckDuckGoSearch } from "@langchain/community/tools/duckduckgo_search";
-import { Calculator } from "@langchain/community/tools/calculator";
+import { DuckDuckGoSearch } from '@langchain/community/tools/duckduckgo_search';
+import { Calculator } from '@langchain/community/tools/calculator';
 import {
   StateGraph,
   Annotation,
   messagesStateReducer,
   START,
-} from "@langchain/langgraph";
-import { ToolNode, toolsCondition } from "@langchain/langgraph/prebuilt";
-import { ChatOpenAI } from "@langchain/openai";
-import { HumanMessage } from "@langchain/core/messages";
+} from '@langchain/langgraph';
+import { ToolNode, toolsCondition } from '@langchain/langgraph/prebuilt';
+import { ChatOpenAI } from '@langchain/openai';
+import { HumanMessage } from '@langchain/core/messages';
 
 const search = new DuckDuckGoSearch();
 const calculator = new Calculator();
 const tools = [search, calculator];
 const model = new ChatOpenAI({
+  model: 'gpt-4o-mini',
   temperature: 0.1,
 }).bindTools(tools);
 
@@ -30,19 +31,19 @@ async function modelNode(state) {
 }
 
 const builder = new StateGraph(annotation)
-  .addNode("model", modelNode)
-  .addNode("tools", new ToolNode(tools))
-  .addEdge(START, "model")
-  .addConditionalEdges("model", toolsCondition)
-  .addEdge("tools", "model");
+  .addNode('model', modelNode)
+  .addNode('tools', new ToolNode(tools))
+  .addEdge(START, 'model')
+  .addConditionalEdges('model', toolsCondition)
+  .addEdge('tools', 'model');
 
 const graph = builder.compile();
 
-// Example usage
+// 예시
 const input = {
   messages: [
     new HumanMessage(
-      "How old was the 30th president of the United States when he died?",
+      '미국의 제30대 대통령이 사망했을 때 몇 살이었나요?',
     ),
   ],
 };

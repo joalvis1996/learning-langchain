@@ -14,7 +14,7 @@ from langgraph.prebuilt import ToolNode, tools_condition
 
 @tool
 def calculator(query: str) -> str:
-    """A simple calculator tool. Input should be a mathematical expression."""
+    '''계산기. 수식만 입력받습니다.'''
     return ast.literal_eval(query)
 
 
@@ -28,34 +28,34 @@ class State(TypedDict):
 
 
 def model_node(state: State) -> State:
-    res = model.invoke(state["messages"])
-    return {"messages": res}
+    res = model.invoke(state['messages'])
+    return {'messages': res}
 
 
 def first_model(state: State) -> State:
-    query = state["messages"][-1].content
+    query = state['messages'][-1].content
     search_tool_call = ToolCall(
-        name="duckduckgo_search", args={"query": query}, id=uuid4().hex
+        name='duckduckgo_search', args={'query': query}, id=uuid4().hex
     )
-    return {"messages": AIMessage(content="", tool_calls=[search_tool_call])}
+    return {'messages': AIMessage(content='', tool_calls=[search_tool_call])}
 
 
 builder = StateGraph(State)
-builder.add_node("first_model", first_model)
-builder.add_node("model", model_node)
-builder.add_node("tools", ToolNode(tools))
-builder.add_edge(START, "first_model")
-builder.add_edge("first_model", "tools")
-builder.add_conditional_edges("model", tools_condition)
-builder.add_edge("tools", "model")
+builder.add_node('first_model', first_model)
+builder.add_node('model', model_node)
+builder.add_node('tools', ToolNode(tools))
+builder.add_edge(START, 'first_model')
+builder.add_edge('first_model', 'tools')
+builder.add_conditional_edges('model', tools_condition)
+builder.add_edge('tools', 'model')
 
 graph = builder.compile()
 
-# Example usage
+# 예시
 input = {
-    "messages": [
+    'messages': [
         HumanMessage(
-            "How old was the 30th president of the United States when he died?"
+            '미국의 제30대 대통령이 사망했을 때 몇 살이었나요?'
         )
     ]
 }

@@ -20,7 +20,7 @@ const tools = [search, calculator];
 const embeddings = new OpenAIEmbeddings();
 const model = new ChatOpenAI({ temperature: 0.1 });
 
-// Create vector store and retriever
+// 벡터 저장소와 검색기 생성
 const toolsStore = await MemoryVectorStore.fromDocuments(
   tools.map(
     (tool) =>
@@ -65,11 +65,11 @@ const builder = new StateGraph(annotation)
 
 const graph = builder.compile();
 
-// Example usage
+// 예시
 const input = {
   messages: [
     new HumanMessage(
-      'How old was the 30th president of the United States when he died?'
+      '미국의 제30대 대통령이 사망했을 때 몇 살이었나요?'
     ),
   ],
 };
