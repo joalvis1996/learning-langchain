@@ -21,7 +21,7 @@ embeddings_model = OpenAIEmbeddings()
 db = PGVector.from_documents(
     documents, embeddings_model, connection=connection)
 
-# 벡터 스토어에서 5개의 관련 문서 검색
+# 벡터 저장소에서 5개의 관련 문서 검색
 retriever = db.as_retriever(search_kwargs={'k': 5})
 
 prompt_hyde = ChatPromptTemplate.from_template(
@@ -34,7 +34,7 @@ prompt_hyde = ChatPromptTemplate.from_template(
 generate_doc = (prompt_hyde | ChatOpenAI(temperature=0) | StrOutputParser())
 
 '''
-위에서 생성한 가상 문서를 검색의 입력으로 사용하여 임베딩을 생성하고 벡터 스토어에서 유사한 문서를 검색
+위에서 생성한 가상 문서를 검색의 입력으로 사용하여 임베딩을 생성하고 벡터 저장소에서 유사한 문서를 검색
 '''
 retrieval_chain = generate_doc | retriever
 

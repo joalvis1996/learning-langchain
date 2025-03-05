@@ -21,7 +21,7 @@ embeddings_model = OpenAIEmbeddings()
 db = PGVector.from_documents(
     documents, embeddings_model, connection=connection)
 
-# 벡터 스토어에서 5개의 관련 문서 검색
+# 벡터 저장소에서 5개의 관련 문서 검색
 retriever = db.as_retriever(search_kwargs={'k': 5})
 
 # 다중 쿼리를 위한 프롬프트

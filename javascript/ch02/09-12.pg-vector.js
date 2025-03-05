@@ -42,7 +42,7 @@ const results = await db.similaritySearch('query', 4);
 
 console.log(`유사도 검색 결과: ${JSON.stringify(results)}`);
 
-console.log('문서를 벡터 스토어에 저장');
+console.log('문서를 벡터 저장소에 저장');
 
 const ids = [uuidv4(), uuidv4()];
 

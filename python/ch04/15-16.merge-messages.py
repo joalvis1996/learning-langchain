@@ -11,14 +11,14 @@ messages = [
     SystemMessage(content='당신은 친절한 어시스턴트입니다.'),
     SystemMessage(content='항상 농담으로 대답하세요.'),
     HumanMessage(
-        content=[{'type': 'text', 'text': '왜 langchain이라고 부르는지 모르겠어요.'}]
+        content=[{'type': 'text', 'text': '어떤 피자가 제일 맛있나요?'}]
     ),
-    HumanMessage(content='그리고 해리슨 체이스는 누구를 쫓는 건가요'),
+    HumanMessage(content='어떤 햄버거가 가장 맛있나요?'),
     AIMessage(
-        content='음, 아마도 \'WordRope\'와 \'SentenceString\'은 그만큼 울림이 없다고 생각했을 겁니다!'
+        content='나는 항상 너만 "고르곤졸라"'
     ),
     AIMessage(
-        content='왜냐하면 그는 아마도 사무실에 남은 마지막 커피잔을 쫓을 테니까요!'
+        content='너가 "버거" 싶어'
     ),
 ]
 

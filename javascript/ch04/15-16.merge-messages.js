@@ -6,17 +6,17 @@ import {
 } from '@langchain/core/messages';
 
 const messages = [
-  new SystemMessage('you\'re a good assistant.'),
-  new SystemMessage('you always respond with a joke.'),
+  new SystemMessage('당신은 친절한 어시스턴트입니다.'),
+  new SystemMessage('항상 농담으로 대답하세요.'),
   new HumanMessage({
-    content: [{ type: 'text', text: 'i wonder why it\'s called langchain' }],
+    content: [{ type: 'text', text: '어떤 피자가 제일 맛있나요?' }],
   }),
-  new HumanMessage('and who is harrison chasing anyways'),
+  new HumanMessage('어떤 햄버거가 가장 맛있나요?'),
   new AIMessage(
-    'Well, I guess they thought \'WordRope\' and \'SentenceString\' just didn\'t have the same ring to it!'
+    '나는 항상 너만 "고르곤졸라"'
   ),
   new AIMessage(
-    'Why, he\'s probably chasing after the last cup of coffee in the office!'
+    '너가 "버거" 싶어'
   ),
 ];
 

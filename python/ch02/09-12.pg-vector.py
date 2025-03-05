@@ -37,7 +37,7 @@ results = db.similarity_search('query', k=4)
 
 print(results)
 
-print('문서를 벡터 스토어에 저장')
+print('문서를 벡터 저장소에 저장')
 ids = [str(uuid.uuid4()), str(uuid.uuid4())]
 db.add_documents(
     [

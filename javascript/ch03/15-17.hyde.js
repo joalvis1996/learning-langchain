@@ -39,7 +39,7 @@ const db = await PGVectorStore.fromDocuments(splitDocs, model, {
   },
 });
 
-// 벡터 스토어에서 5개의 관련 문서 검색
+// 벡터 저장소에서 5개의 관련 문서 검색
 const retriever = db.asRetriever({ k: 5 });
 
 /**

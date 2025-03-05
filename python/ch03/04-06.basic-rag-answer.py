@@ -21,7 +21,7 @@ embeddings_model = OpenAIEmbeddings()
 db = PGVector.from_documents(
     documents, embeddings_model, connection=connection)
 
-# 벡터 스토어에서 2개의 관련 문서 검색
+# 벡터 저장소에서 2개의 관련 문서 검색
 retriever = db.as_retriever(search_kwargs={'k': 2})
 
 query = '고대 그리스 철학사의 주요 인물은 누구인가요?'

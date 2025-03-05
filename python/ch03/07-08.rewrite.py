@@ -37,7 +37,7 @@ embeddings_model = OpenAIEmbeddings()
 db = PGVector.from_documents(
     documents, embeddings_model, connection=connection)
 
-# 벡터 스토어에서 2개의 관련 문서 검색
+# 벡터 저장소에서 2개의 관련 문서 검색
 retriever = db.as_retriever(search_kwargs={'k': 2})
 
 # 관련 질문을 하기 전에 관련 없는 정보로 시작하는 쿼리
