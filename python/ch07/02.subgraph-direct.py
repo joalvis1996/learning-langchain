@@ -1,37 +1,37 @@
 from typing import TypedDict
-
 from langgraph.graph import START, StateGraph
 
 
-# Define the state types for parent and subgraph
+# 부모 그래프와 서브그래프에서 사용할 상태
 class State(TypedDict):
-    foo: str  # this key is shared with the subgraph
+    foo: str  # 서브그래프와 이 키를 공유
 
 
 class SubgraphState(TypedDict):
-    foo: str  # this key is shared with the parent graph
+    foo: str  # 부모 그래프와 이 키를 공유
     bar: str
 
 
-# Define subgraph
+# 서브그래프 정의
 def subgraph_node(state: SubgraphState):
-    # note that this subgraph node can communicate with the parent graph via the shared "foo" key
+    # 서브그래프 노드는 공유 키인 "foo"를 사용해 부모 그래프와 통신한다
     return {"foo": state["foo"] + "bar"}
 
 
 subgraph_builder = StateGraph(SubgraphState)
 subgraph_builder.add_node("subgraph_node", subgraph_node)
-# Additional subgraph setup would go here
+subgraph_builder.add_edge(START, "subgraph_node")
+# 서브그래프에 필요한 추가 설정은 여기에 작성
 subgraph = subgraph_builder.compile()
 
-# Define parent graph
+# 부모 그래프 정의
 builder = StateGraph(State)
 builder.add_node("subgraph", subgraph)
 builder.add_edge(START, "subgraph")
-# Additional parent graph setup would go here
+# 부모 그래프에 필요한 추가 설정은 여기에 작성
 graph = builder.compile()
 
-# Example usage
+# 예시
 initial_state = {"foo": "hello"}
 result = graph.invoke(initial_state)
-print(f"Result: {result}")  # Should append "bar" to the foo value
+print(f"Result: {result}")  # foo에 "bar"가 추가되어야 함

@@ -1,35 +1,34 @@
 import { StateGraph, START, Annotation } from '@langchain/langgraph';
 
 const StateAnnotation = Annotation.Root({
-  foo: Annotation(), // string type
+  foo: Annotation(), // 서브그래프와 이 키를 공유
 });
 
 const SubgraphStateAnnotation = Annotation.Root({
-  foo: Annotation(), // shared with parent graph state
+  foo: Annotation(), // 부모 그래프와 이 키를 공유
   bar: Annotation(),
 });
 
-// Define subgraph
+// 서브그래프 정의
 const subgraphNode = async (state) => {
-  // note that this subgraph node can communicate with
-  // the parent graph via the shared "foo" key
+  // 서브그래프 노드는 공유 키인 "foo"를 사용해 부모 그래프와 통신한다
   return { foo: state.foo + 'bar' };
 };
 
 const subgraph = new StateGraph(SubgraphStateAnnotation)
   .addNode('subgraph', subgraphNode)
   .addEdge(START, 'subgraph')
-  // Additional subgraph setup would go here
+  // 서브그래프에 필요한 추가 설정은 여기에 작성
   .compile();
 
-// Define parent graph
+// 부모 그래프 정의
 const parentGraph = new StateGraph(StateAnnotation)
   .addNode('subgraph', subgraph)
   .addEdge(START, 'subgraph')
-  // Additional parent graph setup would go here
+  // 부모 그래프에 필요한 추가 설정은 여기에 작성
   .compile();
 
-// Example usage
+// 예시
 const initialState = { foo: 'hello' };
 const result = await parentGraph.invoke(initialState);
-console.log(`Result: ${JSON.stringify(result)}`); // Should append "bar" to the foo value
+console.log(`Result: ${JSON.stringify(result)}`); // foo에 "bar"가 추가되어야 함

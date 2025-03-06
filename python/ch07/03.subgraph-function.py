@@ -1,18 +1,16 @@
 from typing import TypedDict
 from langgraph.graph import START, StateGraph
 
-
 class State(TypedDict):
     foo: str
 
-
 class SubgraphState(TypedDict):
-    # none of these keys are shared with the parent graph state
+    # 부모 그래프와 키를 공유하지 않음
     bar: str
     baz: str
 
 
-# Define subgraph
+# 서브그래프 정의
 def subgraph_node(state: SubgraphState):
     return {"bar": state["bar"] + "baz"}
 
@@ -20,28 +18,28 @@ def subgraph_node(state: SubgraphState):
 subgraph_builder = StateGraph(SubgraphState)
 subgraph_builder.add_node("subgraph_node", subgraph_node)
 subgraph_builder.add_edge(START, "subgraph_node")
-# Additional subgraph setup would go here
+# 서브그래프에 필요한 추가 설정은 여기에 작성
 subgraph = subgraph_builder.compile()
 
 
-# Define parent graph node that invokes subgraph
+# 서브그래프를 호출하는 부모 그래프 정의
 def node(state: State):
-    # transform the state to the subgraph state
+    # 부모 그래프의 상태를 서브그래프 상태로 변환
     response = subgraph.invoke({"bar": state["foo"]})
-    # transform response back to the parent state
+    # 응답을 다시 부모 그래프의 상태로 변환
     return {"foo": response["bar"]}
 
 
 builder = StateGraph(State)
-# note that we are using `node` function instead of a compiled subgraph
+# 서브그래프 대신 `node`를 지정
 builder.add_node("node", node)
 builder.add_edge(START, "node")
-# Additional parent graph setup would go here
+# 부모 그래프에 필요한 추가 설정은 여기에 작성
 graph = builder.compile()
 
-# Example usage
+# 예시
 initial_state = {"foo": "hello"}
 result = graph.invoke(initial_state)
 print(
     f"Result: {result}"
-)  # Should transform foo->bar, append "baz", then transform bar->foo
+)  # foo를 bar로 변환해 "baz"를 추가하고 다시 foo로 변환

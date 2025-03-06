@@ -12,16 +12,16 @@ import {
   END,
 } from '@langchain/langgraph';
 
-const model = new ChatOpenAI();
+const model = new ChatOpenAI({model: 'gpt-4o-mini'});
 
 const annotation = Annotation.Root({
   messages: Annotation({ reducer: messagesStateReducer, default: () => [] }),
 });
 
 const generatePrompt = new SystemMessage(
-  `You are an essay assistant tasked with writing excellent 3-paragraph essays.
-Generate the best essay possible for the user's request.
-If the user provides critique, respond with a revised version of your previous attempts.`
+  `당신은 훌륭한 3단락 에세이를 작성하는 임무를 가진 에세이 어시스턴트입니다.
+사용자의 요청에 맞춰 최상의 에세이를 작성하세요.
+사용자가 비평을 제공하면, 이전 시도에 대한 수정 버전을 응답하세요.`
 );
 
 async function generate(state) {
@@ -30,17 +30,17 @@ async function generate(state) {
 }
 
 const reflectionPrompt = new SystemMessage(
-  `You are a teacher grading an essay submission. Generate critique and recommendations for the user's submission.
-Provide detailed recommendations, including requests for length, depth, style, etc.`
+  `당신은 에세이 제출물을 평가하는 교사입니다. 사용자의 제출물에 대해 비평과 추천을 생성하세요.
+길이, 깊이, 스타일 등과 같은 구체적인 요구사항을 포함한 자세한 추천을 제공하세요.`
 );
 
 async function reflect(state) {
-  // Invert the messages to get the LLM to reflect on its own output
+  // 메시지들을 반전시켜 LLM이 자신의 출력에 대해 반성하도록 합니다.
   const clsMap = {
     ai: HumanMessage,
     human: AIMessage,
   };
-  // First message is the original user request. We hold it the same for all nodes
+  // 첫 번째 메시지는 원래 사용자의 요청입니다. 모든 노드에서 동일하게 유지합니다.
   const translated = [
     reflectionPrompt,
     state.messages[0],
@@ -49,13 +49,14 @@ async function reflect(state) {
       .map((msg) => new clsMap[msg._getType()](msg.content)),
   ];
   const answer = await model.invoke(translated);
-  // We treat the output of this as human feedback for the generator
+  // 이 출력 결과를 생성기(generator)에 대한 사용자 피드백으로 취급합니다.
+    return {'messages': [HumanMessage(content=answer.content)]}
   return { messages: [new HumanMessage({ content: answer.content })] };
 }
 
 function shouldContinue(state) {
   if (state.messages.length > 6) {
-    // End after 3 iterations, each with 2 messages
+    // 3회 반복 후, 각 반복마다 2개의 메시지가 쌓이면 종료합니다.
     return END;
   } else {
     return 'reflect';
@@ -71,11 +72,11 @@ const builder = new StateGraph(annotation)
 
 const graph = builder.compile();
 
-// Example usage
+// 예시
 const initialState = {
   messages: [
     new HumanMessage(
-      "Write an essay about the relevance of 'The Little Prince' today."
+      '오늘날 \'어린 왕자\'가 왜 중요한지에 대해 에세이를 작성하세요.'
     ),
   ],
 };
