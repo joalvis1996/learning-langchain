@@ -1,8 +1,11 @@
 from langsmith import Client
+from dotenv import load_dotenv
+
+load_dotenv()
 
 client = Client()
 
-# Create a dataset
+# 데이터셋 제작
 examples = [
     ("Which country's customers spent the most? And how much did they spend?",
      "The country whose customers spent the most is the USA, with a total expenditure of $523.06"),

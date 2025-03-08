@@ -6,6 +6,10 @@ from langsmith.schemas import Example, Run
 from langchain_core.runnables import Runnable
 from agent_sql_graph import assistant_runnable
 import uuid
+from dotenv import load_dotenv
+
+load_dotenv()
+
 _printed = set()
 thread_id = str(uuid.uuid4())
 experiment_prefix = "sql-agent-gpt4o"
