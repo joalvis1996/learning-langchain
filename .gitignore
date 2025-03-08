@@ -103,3 +103,5 @@ logs/
 
 # Jest coverage
 coverage/
+
+.langhraph_api/

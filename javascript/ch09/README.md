@@ -1,31 +1,29 @@
-# Chapter 9: Deployment - RAG AI Agent Example
+# 9장 AI 애플리케이션 배포
 
-This directory contains the code for deploying a Retrieval-Augmented Generation (RAG) AI chatbot agent, as discussed in Chapter 9 of "Learning LangChain." This agent is designed to ingest documents and then answer questions based on the content of those documents.
+러닝 랭체인 9장의 RAG AI 챗봇 에이전트 배포 실습에 필요한 코드를 담은 디렉터리입니다. 이번 실습에서 제공하는 에이전트는 인제스천 과정을 통해 문서를 이해하고, 이해한 내용을 바탕으로 질문에 답합니다.
 
-## Overview
+## 구성
 
-This example demonstrates how to deploy a LangGraph application that consists of two main components:
+이번 실습에서 배포할 랭그래프 애플리케이션은 두 가지 주요 요소 구성되어 있습니다.
 
-1.  **Ingestion Graph:** Responsible for loading, embedding and indexing documents.
-2.  **Retrieval Graph:** Responsible for answering questions based on the indexed documents.
+1.  **인제스천 그래프:** 문서를 로드하고, 임베딩하고, 인덱싱합니다.
+2.  **검색 그래프:** 인덱싱된 문서를 기반으로 질문에 답합니다.
 
-Both Python and JavaScript implementations are provided.
+**참고:** 이번 예시의 완전한 AI 애플리케이션(프런트엔드 및 백엔드)은 [여기](https://github.com/mayooear/ai-pdf-chatbot-langchain/tree/main)에서 확인하세요.
 
-**Note:** If you'd like to see a full ai app (frontend and backend) that incorporates the concepts discussed in this chapter, check it out [here](https://github.com/mayooear/ai-pdf-chatbot-langchain/tree/main).
+## 준비 사항
 
-## Prerequisites
+코드를 실행하기 전에 다음 사항을 확인하세요.
 
-Before running the code, ensure you have:
+1.  **learning-langchain 저장소 루트에 환경 변수 설정:** learning-langchain 저장소의 루트에 `.env` 파일에 필요한 환경 변수를 설정하세요. 필요한 변수 목록은 `.env.example`을 참조하세요.
 
-1.  **Environment Variables at the root of the learning-langchain repository:** If you haven't already, set up the required environment variables in a `.env` file at the root of the learning-langchain repository. See `.env.example` for the list of variables.
+2.  **슈파베이스 계정 및 Supabase API 키:**
+    *   [supabase.com](https://supabase.com)에 가입하세요.
+    *   계정이 생성되면 새 프로젝트를 만든 다음 [Project Settings] 섹션으로 이동하세요.
+    *   [Data API] 섹션으로 이동해 키를 확인하세요.
+    *   프로젝트 URL과 `service_role` 키를 복사하여 `.env` 파일에 `SUPABASE_URL` 및 `SUPABASE_SERVICE_ROLE_KEY` 값으로 추가하세요.
 
-2.  **Supabase account and a Supabase API key:**
-    *   To register for a Supabase account, go to [supabase.com](https://supabase.com) and sign up.
-    *   Once you have an account, create a new project then navigate to the settings section.
-    *   In the settings section, navigate to the API section to see your keys.
-    *   Copy the project URL and service_role key and add them to the `.env` file as values for `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`.
-
-3.  **Docker (optional):** Docker is required to run the Chroma vector database in the js implementation. Follow the instructions in the [README](../../README.md#docker-setup-and-usage) to install and set up Docker. After setting up Docker, run the following command to start the Chroma server:
+3.  **도커:** 자바스크립트 구현에서 Chroma 벡터 데이터베이스를 실행하려면 도커가 필요합니다. 도커 설치 및 설정은 [README](../../README.md#docker-setup-and-usage)의 지침을 따르세요. 도커 설정이 완료되면 다음 명령어를 실행하여 Chroma 서버를 시작하세요.
 
 ```bash 
 docker pull chromadb/chroma
@@ -33,169 +31,83 @@ docker run -p 8000:8000 chromadb/chroma
 
 ```
 
-This will start the Chroma server on port 8000.
+8000번 포트에서 Chroma 서버가 시작합니다.
 
-## Repository Structure
+## 저장소 구성
 
-This directory contains the following structure:
+저장소는 다음과 같이 구성됩니다.
 
 ```
-├── js # JavaScript implementation
-│ ├── src # Source code
-│ │ ├── ingestion_graph # Ingestion graph components
-│ │ ├── retrieval_graph # Retrieval graph components
-│ │ ├── shared # Shared components
-│ │ ├── configuration.ts # Configuration files
-│ │ ├── graph.ts # Graph definition files
-│ │ ├── state.ts # State definition files
-│ │ └── utils.ts # Utility functions
-│ ├── demo.ts # Demo script
-│ ├── langgraph.json # LangGraph configuration file
-│ ├── package.json # JavaScript dependencies
-│ └── tsconfig.json # TypeScript configuration
-└── py # Python implementation
-    ├── src # Source code
-    │ ├── ingestion_graph # Ingestion graph components
-    │ ├── retrieval_graph # Retrieval graph components
-    │ ├── shared # Shared components
-    │ ├── configuration.py # Configuration files
-    │ ├── graph.py # Graph definition files
-    │ ├── state.py # State definition files
-    │ └── utils.py # Utility functions
-    ├── demo.py # Demo script
-    ├── langgraph.json # LangGraph configuration file
-    └── pyproject.toml # Python dependencies
+ch09 # 자바스크립트 구현
+├── src # 소스 코드
+│ ├── ingestion_graph # 인제스천 그래프 컴포넌트
+│ ├── retrieval_graph # 검색 그래프 컴포넌트 
+│ ├── shared # 공유 컴포넌트
+│ ├── configuration.ts # 설정 파일
+│ ├── graph.ts # 그래프 정의 파일
+│ ├── state.ts # 상태 정의 파일
+│ └── utils.ts # 유틸리티 함수
+├── demo.ts # 데모 스크립트
+├── langgraph.json # 랭그래프 설정 파일
+├── package.json # 자바스크립트 의존성
+└── tsconfig.json # 타입스크립트 설정
 ```
 
-## Setting up the Environment
+## 환경 설정
 
-### Python
-
-1.  **Create a virtual environment:**
+1.  **가상 환경 설정:**
 
     ```bash
-    python -m venv .venv
-    ```
-
-2.  **Activate the virtual environment:**
-
-    *   macOS/Linux:
-
-    ```bash
-    source .venv/bin/activate
-    ```
-
-    *   Windows:
-
-    ```bash
-    .venv\Scripts\activate
-    ```
-
-3.  **Install dependencies:**
-
-    ```bash
-    pip install -e .
-    ```
-
-### JavaScript
-
-1.  **Install dependencies:**
-
-    ```bash
+    cd javascript/ch09
     npm install
     ```
 
-## Running the Application
-
-### Python
-
-1.  **Navigate to the `py` directory:**
-
-    ```bash
-    cd ch9/py
-    ```
-
-2.  **Run the demo script:**
-
-    ```bash
-    python demo.py
-    ```
+## 애플리케이션 실행
 
 ### JavaScript
 
-1.  **Navigate to the `js` directory:**
-
-    ```bash
-    cd ch9/js
-    ```
-
-2.  **Run the demo script:**
+1.  **데모 스크립트 실행**
 
     ```bash
     node demo.ts
     ```
 
-## Local Development Server
+## 로컬 개발 서버
 
-You can run the local development server for either JavaScript or Python implementations from the root directory of the learning-langchain repository:
+현재 위치에서 로컬 개발 서버를 실행할 수 있습니다.
 
-##### For JavaScript:
 ```bash
 # Using npm script
 npm run langgraph:dev
 ```
 
-##### For Python:
-You have two options:
+2024 포트에서 로컬 개발 서버가 시작되고 디버깅 및 추적을 위한 langsmith UI가 연결됩니다.
 
-1. Using the CLI directly:
-```bash
-langgraph dev -c ch9/py/langgraph.json --verbose
-```
+## 애플리케이션 배포
 
-2. Using the installed script command:
-```bash
-langgraph-dev
-```
+LangGraph 에이전트를 클라우드 서비스에 배포하려면 이 [가이드](https://langchain-ai.github.io/langgraph/cloud/quick_start/?h=studio#deploy-to-langgraph-cloud)를 따라 LangGraph의 클라우드를 사용하거나 이 [가이드](https://langchain-ai.github.io/langgraph/how-tos/deploy-self-hosted/)를 따라 직접 호스팅할 수 있습니다.
 
-Note: To use the script command, make sure you have installed the package in development mode (`pip install -e .`).
+### 랭그래프 CLI 사용
 
-This will start the local development server on port 2024 and redirect you to the langsmith UI for debugging and tracing.
+1.  **랭그래프 설정:**
 
-## Deploying the Application
+    *   `langgraph.json` 파일이 그래프의 진입점을 올바르게 가리키도록 구성되어 있는지 확인하세요.
 
-To deploy your LangGraph agent to a cloud service, you can either use LangGraph's cloud as per this [guide](https://langchain-ai.github.io/langgraph/cloud/quick_start/?h=studio#deploy-to-langgraph-cloud) or self-host it as per this [guide](https://langchain-ai.github.io/langgraph/how-tos/deploy-self-hosted/).
+2.  **애플리케이션 배포:**
 
-### Using LangGraph CLI
-
-1.  **Configure LangGraph:**
-
-    *   Ensure that the `langgraph.json` file is correctly configured to point to the entry points of your graphs.
-
-2.  **Deploy the application:**
-
-    *   Run the following command from the root of the repository:
+    *   저장소의 루트에서 다음 명령어를 실행
 
     ```bash
-    npx @langchain/langgraph-cli deploy -c ch9/js/langgraph.json
+    npx @langchain/langgraph-cli deploy -c javascript/ch09/langgraph.json
     ```
 
-    *   Or, for python:
-
-    ```bash
-    npx @langchain/langgraph-cli deploy -c ch9/py/langgraph.json
     ```
 
     *   Follow the prompts to deploy your application.
 
-## Interacting with the Deployed Application
+*   프롬프트를 따라 배포 과정을 완료하세요.
 
-Once deployed, you can interact with the application using the LangGraph SDK. The `demo.ts` and `demo.py` files provide examples of how to create threads and invoke the deployed graphs.
+## 배포된 애플리케이션과 상호작용하기
 
-## Troubleshooting
+배포가 완료되면 LangGraph SDK를 사용하여 애플리케이션과 상호작용할 수 있습니다. `demo.ts` 파일에서 스레드를 생성하고 배포된 그래프를 호출하는 방법에 대한 예제를 확인할 수 있습니다.
 
-*   **Dependency Issues:** Ensure all dependencies are installed correctly using `pip install -e .` (Python) or `npm install` (JavaScript).
-*   **Environment Variables:** Verify that all required environment variables are set correctly in the `.env` file in the root of the learning-langchain repository.
-*   **Docker:** Ensure that Docker is running and that the container is set up correctly.
-*   **API URL:** Ensure that the `LANGGRAPH_API_URL` environment variable is set to the correct URL of your LangGraph server.
-*   **File Paths:** Double-check that all file paths in the configuration files are correct.

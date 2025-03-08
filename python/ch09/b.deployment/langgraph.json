@@ -4,5 +4,5 @@
     "indexer": "./src/ingestion_graph/graph.py:graph",
     "retrieval_graph": "./src/retrieval_graph/graph.py:graph"
   },
-  "env": "../../.env"
+  "env": ".env"
 }
