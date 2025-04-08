@@ -38,4 +38,4 @@ const semanticRouter = promptRouter.pipe(
 );
 
 const result = await semanticRouter.invoke('블랙홀이란 무엇인가요?');
-console.log('\n의미적 라우팅 결과: ', result);
+console.log('\n의미론적 라우팅 결과: ', result);

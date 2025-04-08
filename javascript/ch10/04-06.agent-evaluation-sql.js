@@ -58,7 +58,7 @@ const experimentResults = await evaluate(
   }
 );
 
-// Single tool evaluation
+// 단일 도구 평가
 const predictAssistant = traceable(async (example) => {
   const result = await graph.invoke(
     { messages: [['user', example.input]] },
@@ -67,6 +67,7 @@ const predictAssistant = traceable(async (example) => {
   return { response: result };
 });
 
+// 특정 도구 평가
 const checkSpecificToolCall = async (run, example) => {
   const response = run.outputs['response'];
   const messages = response.messages;
@@ -74,7 +75,7 @@ const checkSpecificToolCall = async (run, example) => {
   let firstToolCall = null;
   for (const message of messages) {
     if (message.tool_calls?.length > 0) {
-      // Get the name of the first tool call in the message
+      // 메시지의 첫 번째 도구 호출 이름 가져오기
       firstToolCall = message.tool_calls[0].name;
       break;
     }
@@ -168,7 +169,7 @@ const containsAllToolCallsExactOrder = async ({ run, example }) => {
     (m) => m.tool_calls?.map((tc) => tc.name) || m.name || []
   );
 
-  // Find the first occurrence sequence
+  // 첫 번째 발생 시퀀스 찾기
   const firstOccurrences = [];
   for (const call of toolCalls) {
     if (call === expectedSequence[firstOccurrences.length]) {
@@ -184,7 +185,7 @@ const containsAllToolCallsExactOrder = async ({ run, example }) => {
   return { key: 'multi_tool_call_exact_order', score };
 };
 
-// Prediction functions for different evaluation types
+// 다양한 평가 유형을 위한 예측 함수
 const predictSqlAgentMessages = traceable(async (example) => {
   const result = await graph.invoke(
     { messages: [['user', example.input]] },
@@ -193,7 +194,7 @@ const predictSqlAgentMessages = traceable(async (example) => {
   return { response: result };
 });
 
-// Trajectory Evaluation Execution
+// 진행 과정 평가 실행
 const trajectoryResults = await evaluate(
   (inputs) => predictSqlAgentMessages(inputs),
   {

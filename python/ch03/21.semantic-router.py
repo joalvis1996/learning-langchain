@@ -36,4 +36,4 @@ def prompt_router(query):
 semantic_router = (prompt_router | ChatOpenAI() | StrOutputParser())
 
 result = semantic_router.invoke('블랙홀이란 무엇인가요?')
-print('\n의미적 라우팅 결과: ', result)
+print('\n의미론적 라우팅 결과: ', result)
