@@ -10,6 +10,4 @@ completions = model.batch(['반가워요!', '잘 있어요!'])
 
 for token in model.stream('잘 있어요!'):
     print(token)
-    # 안
-    # 녕
-    # 히
+    
