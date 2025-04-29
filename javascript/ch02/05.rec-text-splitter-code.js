@@ -1,6 +1,12 @@
 import { RecursiveCharacterTextSplitter } from '@langchain/textsplitters';
 
-const PYTHON_CODE = ` def hello_world(): print("Hello, World!") # Call the function hello_world() `;
+const PYTHON_CODE = `
+def hello_world(): 
+    print("Hello, World!") 
+  
+# Call the function
+hello_world() 
+`;
 
 const pythonSplitter = RecursiveCharacterTextSplitter.fromLanguage('python', {
   chunkSize: 50,

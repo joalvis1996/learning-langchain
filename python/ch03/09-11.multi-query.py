@@ -42,7 +42,7 @@ query_gen = perspectives_prompt | llm | parse_queries_output
 
 
 def get_unique_union(document_lists):
-    # 리스트의 리스트를 평탄화하고 중복을 제거
+    # 목록 여러 개를 포함한 리스트를 평탄화하고 중복 제거
     deduped_docs = {
         doc.page_content: doc for sublist in document_lists for doc in sublist}
     # 고유한 문서만 반환

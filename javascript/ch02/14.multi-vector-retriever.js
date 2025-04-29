@@ -56,7 +56,7 @@ const summaryDocs = summaries.map((summary, i) => {
 // 기존 청크를 저장할 바이트스토어
 const byteStore = new InMemoryStore();
 
-// 요약을 저장할 벡터스토어
+// 요약을 저장할 벡터 저장소
 const vectorStore = await PGVectorStore.fromDocuments(
   docs,
   new OpenAIEmbeddings(),

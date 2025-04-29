@@ -17,12 +17,12 @@ RAG = RAGPretrainedModel.from_pretrained("colbert-ir/colbertv2.0")
 
 def get_wikipedia_page(title: str):
     """
-    위키피디아 페이지의 전체 텍스트 내용을 가져옴.
+    위키백과의 페이지를 불러온다.
 
-    :param title: str - 위키피디아 페이지의 제목
-    :return: str - 페이지의 전체 텍스트 내용을 raw 문자열로 반환
+    :param title: str - 위키백과 페이지의 제목
+    :return: str - 페이지의 전체 텍스트를 raw 문자열로 반환
     """
-    # 위키피디아 API 엔드포인트
+    # 위키백과 API 엔드포인트
     URL = "https://en.wikipedia.org/w/api.php"
 
     # API 요청을 위한 매개변수
@@ -34,13 +34,13 @@ def get_wikipedia_page(title: str):
         "explaintext": True,
     }
 
-    # 위키피디아의 모범 사례를 준수하기 위한 사용자 정의 User-Agent 헤더
+    # 위키백과의 데이터를 받아올 헤더 설정
     headers = {"User-Agent": "RAGatouille_tutorial/0.0.1"}
 
     response = requests.get(URL, params=params, headers=headers)
     data = response.json()
     
-    # 페이지 내용 추출
+    # 페이지 컨텐츠 추출
     page = next(iter(data["query"]["pages"].values()))
     return page["extract"] if "extract" in page else None
 
@@ -60,6 +60,6 @@ results = RAG.search(query="What animation studio did Miyazaki found?", k=3)
 
 print(results)
 
-# 랭체인의 리트리버 사용
+# 랭체인에 전달
 retriever = RAG.as_langchain_retriever(k=3)
 retriever.invoke("What animation studio did Miyazaki found?")

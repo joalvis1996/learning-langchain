@@ -35,7 +35,7 @@ def generate(state: State) -> State:
 
 
 def reflect(state: State) -> State:
-    # 메시지들을 반전시켜 LLM이 자신의 출력에 대해 반성하도록 합니다.
+    # 메시지들을 반전시켜 LLM이 자신의 출력을 성찰하도록 합니다.
     cls_map = {AIMessage: HumanMessage, HumanMessage: AIMessage}
     # 첫 번째 메시지는 원래 사용자의 요청입니다. 모든 노드에서 동일하게 유지합니다.
     translated = [reflection_prompt, state['messages'][0]] + [

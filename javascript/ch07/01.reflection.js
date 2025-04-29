@@ -35,7 +35,7 @@ const reflectionPrompt = new SystemMessage(
 );
 
 async function reflect(state) {
-  // 메시지들을 반전시켜 LLM이 자신의 출력에 대해 반성하도록 합니다.
+  // 메시지들을 반전시켜 LLM이 자신의 출력을 성찰하도록 합니다.
   const clsMap = {
     ai: HumanMessage,
     human: AIMessage,
