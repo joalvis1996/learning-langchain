@@ -58,7 +58,7 @@ const experimentResults = await evaluate(
   }
 );
 
-// 단일 도구 평가
+// 단일 툴 평가
 const predictAssistant = traceable(async (example) => {
   const result = await graph.invoke(
     { messages: [['user', example.input]] },
@@ -67,7 +67,7 @@ const predictAssistant = traceable(async (example) => {
   return { response: result };
 });
 
-// 특정 도구 평가
+// 특정 툴 평가
 const checkSpecificToolCall = async (run, example) => {
   const response = run.outputs['response'];
   const messages = response.messages;
@@ -75,7 +75,7 @@ const checkSpecificToolCall = async (run, example) => {
   let firstToolCall = null;
   for (const message of messages) {
     if (message.tool_calls?.length > 0) {
-      // 메시지의 첫 번째 도구 호출 이름 가져오기
+      // 메시지의 첫 번째 툴 호출 이름 가져오기
       firstToolCall = message.tool_calls[0].name;
       break;
     }

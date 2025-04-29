@@ -71,12 +71,12 @@ experiment_results = evaluate(
 
 
 """
-단일 도구 평가
+단일 툴 평가
 """
 
 
 def predict_assistant(example: dict):
-    """단일 도구 호출 평가를 위한 어시스턴트 호출"""
+    """단일 툴 호출 평가를 위한 어시스턴트 호출"""
     msg = [("user", example["input"])]
     result = assistant_runnable.invoke({"messages": msg})
     return {"response": result}
@@ -84,16 +84,16 @@ def predict_assistant(example: dict):
 
 def check_specific_tool_call(root_run: Run, example: Example) -> dict:
     """
-    응답의 첫 번째 도구 호출이 예상된 도구 호출과 일치하는지 확인합니다.
+    응답의 첫 번째 툴 호출이 예상된 툴 호출과 일치하는지 확인합니다.
     """
 
-    # 예상되는 도구 호출
+    # 예상되는 툴 호출
     expected_tool_call = 'sql_db_list_tables'
 
     # 실행
     response = root_run.outputs["response"]
 
-    # 도구 호출 가져오기
+    # 툴 호출 가져오기
     try:
         tool_call = getattr(response, 'tool_calls', [])[0]['name']
 
@@ -128,7 +128,7 @@ def predict_sql_agent_messages(example: dict):
 
 def find_tool_calls(messages):
     """
-    반환된 메시지에서 모든 도구 호출 찾기
+    반환된 메시지에서 모든 툴 호출 찾기
     """
     tool_calls = [tc['name'] for m in messages['messages']
                   for tc in getattr(m, 'tool_calls', [])]
@@ -137,13 +137,13 @@ def find_tool_calls(messages):
 
 def contains_all_tool_calls_any_order(root_run: Run, example: Example) -> dict:
     """
-    예상되는 모든 도구가 순서에 관계없이 호출되었는지 확인합니다.
+    예상되는 모든 툴이 순서에 관계없이 호출되었는지 확인합니다.
     """
     expected = ['sql_db_list_tables', 'sql_db_schema',
                 'sql_db_query_checker', 'sql_db_query', 'check_result']
     messages = root_run.outputs["response"]
     tool_calls = find_tool_calls(messages)
-    # 모든 도구 호출 출력
+    # 모든 툴 호출 출력
     # print("Here are my tool calls:")
     # print(tool_calls)
     if set(expected) <= set(tool_calls):
@@ -155,11 +155,11 @@ def contains_all_tool_calls_any_order(root_run: Run, example: Example) -> dict:
 
 def contains_all_tool_calls_in_order(root_run: Run, example: Example) -> dict:
     """
-    예상되는 모든 도구가 정확한 순서로 호출되었는지 확인합니다.
+    예상되는 모든 툴이 정확한 순서로 호출되었는지 확인합니다.
     """
     messages = root_run.outputs["response"]
     tool_calls = find_tool_calls(messages)
-    # 모든 도구 호출 출력
+    # 모든 툴 호출 출력
     # print("Here are my tool calls:")
     # print(tool_calls)
     it = iter(tool_calls)
@@ -174,13 +174,13 @@ def contains_all_tool_calls_in_order(root_run: Run, example: Example) -> dict:
 
 def contains_all_tool_calls_in_order_exact_match(root_run: Run, example: Example) -> dict:
     """
-    예상되는 모든 도구가 정확한 순서로 호출되고 추가 도구 호출이 없는지 확인합니다.
+    예상되는 모든 툴이 정확한 순서로 호출되고 추가 툴 호출이 없는지 확인합니다.
     """
     expected = ['sql_db_list_tables', 'sql_db_schema',
                 'sql_db_query_checker', 'sql_db_query', 'check_result']
     messages = root_run.outputs["response"]
     tool_calls = find_tool_calls(messages)
-    # 모든 도구 호출 출력
+    # 모든 툴 호출 출력
     # print("Here are my tool calls:")
     # print(tool_calls)
     if tool_calls == expected:
