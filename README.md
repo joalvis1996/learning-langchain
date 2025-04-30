@@ -51,7 +51,7 @@ python example_script.py
 
 ```bash
 export OPENAI_API_KEY=<오픈AI-API-키>
-cd javascript/ch00 # ch00는 해당 프로젝트 이름
+cd javascript/ch00 # ch00는 해당 챕터 번호
 # 실행 명령어 (예시)
 node 00.xxxxx.js
 ```
