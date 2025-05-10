@@ -14,9 +14,9 @@
 
 
 **구매 링크**
-* 교보문고
-* 예스24
-* 알라딘
+* [교보문고](https://product.kyobobook.co.kr/detail/S000216453776)
+* [예스24](https://www.yes24.com/product/goods/146327472)
+* [알라딘](https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=363882755)
 
 
 LLM 애플리케이션, 어디서부터 시작해야 할지 막막한가요?
