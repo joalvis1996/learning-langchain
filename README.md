@@ -1,4 +1,9 @@
-# 러닝 랭체인
+> 📚 이 저장소는 원본 [learning-langchain](https://github.com/langchain-ai/learning-langchain) 저장소를 기반으로 합니다.  
+> 책 러닝 랭체인을 읽으면서 학습한 코드와 정리 내용을 별도의 디렉토리에 기록하고 있으며, 제 개인적인 학습 과정을 아카이빙하는 용도로 사용합니다.
+
+--- 
+
+# 교재: 러닝 랭체인
 <img align="right" src="./cover.png" width="300px">
 
 ### 랭체인부터 랭그래프, RAG, AI 에이전트, 그리고 MCP까지<br>직접 만들며 익히는 생성 AI 애플리케이션 개발의 모든 것
