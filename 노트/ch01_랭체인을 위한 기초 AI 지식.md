@@ -106,17 +106,49 @@ LLM의 핵심인 **트랜스포머 신경망 구조**는 문장 내의 각 단�
 ### 1. 제로샷 프롬프트
 - 어떠한 example도 주지 않고 오로지 **지시(instruction)** 만으로 문제를 풀게 하는 방식
  
+    ```
+    # 단순 지시, 예시 없음
+    Explain the offside rule in soccer.
+    ```
+ 
 ### 2. 사고의 연쇄 (CoT)
 - LLM이 **시간을 들여 사고하도록** 프롬프트 앞에 LLM이 답에 도달하는 과정을 설명하도록 지시(instruction)을 삽입하는 방식
 - 전반적으로 작업의 성능을 높임
 - 다만, 이미지 캡션 생성처럼 사람이 **생각할수록 효율이 떨어지는** 작업에서 사용 시 효율 낮아짐
  
+    ```
+    # 사고 과정을 단계별로 쓰도록 지시
+    Explain the offside rule in soccer.
+    Think step by step:
+    1. Describe when a player is considered offside.
+    2. Explain the role of the ball and the second-last defender.
+    3. Summarize the rule in one short sentence.
+    ```
+ 
 ### 3. 검색 증강 생성 (RAG)
 - 관련 있는 **텍스트(켄텍스트)**를 프롬프트에 포함시키는 방식
 - 실제 애플리케이션에서는 CoT와 결합해 사용
  
+    ```
+    # 외부 문서/DB에서 관련 컨텍스트를 포함
+    [Context]
+    "A player is in an offside position if they are nearer to the opponent’s goal line than both the ball and the second-last opponent, at the moment the ball is played to them.  
+    However, being in an offside position is not an offense by itself; the player must also be involved in active play."
+ 
+    [Question]
+    What is the offside rule in soccer?
+    ```
+ 
 ### 4. 툴 호출
 - 프롬프트에 미리 LLM이 사용할 수 있는 **외부 함수(툴)**을 불러와서 문제를 풀게 하는 방식
+ 
+    ```
+    # 외부 API/툴을 불러 정보를 가져오도록 유도
+    You have access to the following tool:
+    - get_soccer_rule(rule_name: str): returns details of soccer rules.
+ 
+    User: "What is the offside rule in soccer?"
+    ```
  
 ### 5. 퓨샷 프롬프트
 - 단순 지시뿐만 아니라 질문&정답 예제를 제공하여 문제를 푸는 **패턴**을 학습하도록 하는 방식
@@ -152,3 +184,17 @@ LLM의 핵심인 **트랜스포머 신경망 구조**는 문장 내의 각 단�
         - 검색 시스템을 구축해야 함 (벡터 DB, RAG)
         - 응답 속도 느려질 수 있음
         - RAG 구현 방식 중 하나이나 RAG가 더 넓은 개념. RAG는 단순 예시 검색뿐만 아니라 문서 검색, 지식 그래프, API 호출까지 포함.
+   
+    ```
+    # 예시 Q&A를 먼저 제공해 패턴을 학습시킴
+    You are a soccer coach. Explain rules simply.
+ 
+    Q: What is the handball rule in soccer?
+    A: It is a foul if a player deliberately touches the ball with their hand or arm.
+ 
+    Q: What is the penalty kick rule in soccer?
+    A: A penalty is awarded when a foul is committed inside the defending team’s penalty area.
+ 
+    Q: What is the offside rule in soccer?
+    A:
+    ```
