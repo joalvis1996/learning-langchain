@@ -111,7 +111,7 @@ LLM의 핵심인 **트랜스포머 신경망 구조**는 문장 내의 각 단�
     Explain the offside rule in soccer.
     ```
 
-- 예시: [zero_shot.py](../노트/zero_shot.py)
+- 코드: [zero_shot.py](../노트/zero_shot.py)
     ```
     import os
     from langchain_google_genai import ChatGoogleGenerativeAI
@@ -146,6 +146,33 @@ LLM의 핵심인 **트랜스포머 신경망 구조**는 문장 내의 각 단�
     2. Explain the role of the ball and the second-last defender.
     3. Summarize the rule in one short sentence.
     ```
+    
+- 코드: chain_of_thought.py](../노트/chain_of_thought.py)
+    ```
+    import os
+    from dotenv import load_dotenv
+    from langchain_google_genai import ChatGoogleGenerativeAI
+
+    load_dotenv()
+    apiKey = os.getenv("GOOGLE_API_KEY")
+
+    llm = ChatGoogleGenerativeAI(
+        model="gemini-2.5-flash",
+        temperature=0.7,
+        google_api_key=apiKey
+    )
+
+    cotPrompt = """
+    Explain the offside rule in soccer.
+    Think step by step:
+    1. Describe when a player is considered offside.
+    2. Explain the role of the ball and the second-last defender.
+    3. Summarize the rule in one short sentence.
+    """
+
+    response = llm.invoke(cotPrompt)
+    print(response.content)
+      ```
  
 ### 3. 검색 증강 생성 (RAG)
 - 관련 있는 **텍스트(켄텍스트)**를 프롬프트에 포함시키는 방식
