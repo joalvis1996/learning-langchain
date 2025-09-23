@@ -110,7 +110,29 @@ LLM의 핵심인 **트랜스포머 신경망 구조**는 문장 내의 각 단�
     # 단순 지시, 예시 없음
     Explain the offside rule in soccer.
     ```
- 
+
+- 예시: [zero_shot.py](../노트/zero_shot.py)
+    ```
+    import os
+    from langchain_google_genai import ChatGoogleGenerativeAI
+    from dotenv import load_dotenv
+
+    load_dotenv()
+    apiKey = os.getenv("google_api_key")
+
+    llm = ChatGoogleGenerativeAI(
+        model="gemini-2.5-flash",
+        temperature=0.7,
+        google_api_key=apiKey
+    )
+
+    zeroShotPrompt = "Explain the offside rule in soccer"
+    response = llm.invoke(zeroShotPrompt)
+
+    print(response.content)
+    ```
+
+
 ### 2. 사고의 연쇄 (CoT)
 - LLM이 **시간을 들여 사고하도록** 프롬프트 앞에 LLM이 답에 도달하는 과정을 설명하도록 지시(instruction)을 삽입하는 방식
 - 전반적으로 작업의 성능을 높임
