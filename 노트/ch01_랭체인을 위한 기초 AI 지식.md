@@ -172,7 +172,7 @@ LLM의 핵심인 **트랜스포머 신경망 구조**는 문장 내의 각 단�
 
     response = llm.invoke(cotPrompt)
     print(response.content)
-      ```
+    ```
  
 ### 3. 검색 증강 생성 (RAG)
 - 관련 있는 **텍스트(켄텍스트)**를 프롬프트에 포함시키는 방식
