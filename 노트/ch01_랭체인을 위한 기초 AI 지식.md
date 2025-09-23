@@ -146,8 +146,8 @@ LLM의 핵심인 **트랜스포머 신경망 구조**는 문장 내의 각 단�
     2. Explain the role of the ball and the second-last defender.
     3. Summarize the rule in one short sentence.
     ```
-    
-- 코드: chain_of_thought.py](../노트/chain_of_thought.py)
+
+- 코드: [chain_of_thought.py](../노트/chain_of_thought.py)
     ```
     import os
     from dotenv import load_dotenv
