@@ -25,4 +25,4 @@ chatPrompt = ChatPromptTemplate.from_messages([
     ("user", "학생이 {topic}에 대해 질문합니다. 쉽게 설명해주세요.")
 ])
 
-chatPrompt.format_messages()
+message = chatPrompt.format_messages(topic="오프사이드 규칙")
