@@ -111,7 +111,7 @@ LLM의 핵심인 **트랜스포머 신경망 구조**는 문장 내의 각 단�
     Explain the offside rule in soccer.
     ```
 
-- 코드: [zero_shot.py](../노트/zero_shot.py)
+- 코드: [zero_shot.py](zero_shot.py)
     ```
     import os
     from langchain_google_genai import ChatGoogleGenerativeAI
@@ -147,7 +147,7 @@ LLM의 핵심인 **트랜스포머 신경망 구조**는 문장 내의 각 단�
     3. Summarize the rule in one short sentence.
     ```
 
-- 코드: [chain_of_thought.py](../노트/chain_of_thought.py)
+- 코드: [chain_of_thought.py](/chain_of_thought.py)
     ```
     import os
     from dotenv import load_dotenv
@@ -187,7 +187,7 @@ LLM의 핵심인 **트랜스포머 신경망 구조**는 문장 내의 각 단�
     [Question]
     What is the offside rule in soccer?
     ```
-- 코드: [rag.py](../노트/rag.py)
+- 코드: [rag.py](rag.py)
     ```
     import os
     from dotenv import load_dotenv
