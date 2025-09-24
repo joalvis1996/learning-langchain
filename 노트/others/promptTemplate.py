@@ -1,6 +1,10 @@
-from langchain.prompts import PromptTemplate                # 기존에 정의해놓은 프롬프트 템플릿 가져오기
-from langchain_google_genai import ChatGoogleGenerativeAI   # Google Gemini(Generative AI)용 LangChain 래퍼(모델 어댑터). LangChain 표준 인터페이스로 Gemini를 호출할 수 있게 해줌.
+# 기존에 정의해놓은 프롬프트 템플릿 가져오기
+from langchain.prompts import PromptTemplate              
+
 from dotenv import load_dotenv
+
+# Google Gemini(Generative AI)용 LangChain 래퍼(모델 어댑터). LangChain 표준 인터페이스로 Gemini를 호출할 수 있게 해줌.
+from langchain_google_genai import ChatGoogleGenerativeAI 
 
 import os
 
