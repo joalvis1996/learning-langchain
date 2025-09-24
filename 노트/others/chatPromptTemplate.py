@@ -26,3 +26,6 @@ chatPrompt = ChatPromptTemplate.from_messages([
 ])
 
 message = chatPrompt.format_messages(topic="오프사이드 규칙")
+
+response = llm.invoke(message)
+print(response.content)
