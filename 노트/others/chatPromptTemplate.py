@@ -25,7 +25,7 @@ chatPrompt = ChatPromptTemplate.from_messages([
     ("user", "학생이 {topic}에 대해 질문합니다. 쉽게 설명해주세요.")
 ])
 
-message = chatPrompt.format_messages(topic="오프사이드 규칙")
+finalPrompt = chatPrompt.format_messages(topic="오프사이드 규칙")
 
-response = llm.invoke(message)
+response = llm.invoke(finalPrompt)
 print(response.content)
