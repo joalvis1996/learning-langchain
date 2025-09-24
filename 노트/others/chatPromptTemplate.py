@@ -16,9 +16,9 @@ llm = ChatGoogleGenerativeAI(
 # 대화형 프롬프트를 만드는 메서드
 # 여러 메시지(system / user / assistant)를 구조화해서 하나의 템플릿으로 묶어주는 기능
 
-# system = 모델의 역할, 말투, 규칙 정의 -> SystemMessage
-# user = 사용자의 입력               -> HumanMessage
-# assistant = 이전 AI 답변          -> AIMessage
+# system = 모델의 역할, 말투, 규칙 정의  -> SystemMessage
+# user = 사용자의 입력                -> HumanMessage
+# assistant = 이전 AI 답변           -> AIMessage
  
 chatPrompt = ChatPromptTemplate.from_messages([
     ("system", "당신은 친절한 선생님입니다. 모든 답변은 초보자도 이해가기 쉽게 설명해주세요."),
