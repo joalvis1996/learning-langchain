@@ -11,6 +11,7 @@ llm = ChatGoogleGenerativeAI(
     google_api_key=apiKey
 )
 
+
 cotPrompt = """
 Explain the offside rule in soccer.
 Think step by step:
