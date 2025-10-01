@@ -23,6 +23,7 @@ ragPrompt = f"""
 [Context]
 {context}
 
+
 [Question]
 What is the offside rule in soccer?
 """
