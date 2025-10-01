@@ -28,5 +28,6 @@ ragPrompt = f"""
 What is the offside rule in soccer?
 """
 
+
 response = llm.invoke(ragPrompt)
 print(response.content)
