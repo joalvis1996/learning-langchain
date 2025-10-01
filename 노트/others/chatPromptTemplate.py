@@ -18,7 +18,7 @@ llm = ChatGoogleGenerativeAI(
 
 # system = 모델의 역할, 말투, 규칙 정의  ->  SystemMessage
 # user = 사용자의 입력                ->  HumanMessage
-# assistant = 이전 AI 답변           -> AIMessage
+# assistant = 이전 AI 답변           ->  AIMessage
  
 chatPrompt = ChatPromptTemplate.from_messages([
     ("system", "당신은 친절한 선생님입니다. 모든 답변은 초보자도 이해가기 쉽게 설명해주세요."),
