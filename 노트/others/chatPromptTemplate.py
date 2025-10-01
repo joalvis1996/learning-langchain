@@ -22,7 +22,7 @@ llm = ChatGoogleGenerativeAI(
  
 chatPrompt = ChatPromptTemplate.from_messages([
     ("system", "당신은 친절한 선생님입니다. 모든 답변은 초보자도 이해가기 쉽게 설명해주세요."),
-    ("user", "학생이 {topic}에 대해 질문합니다. 쉽게 설명해주세요.")
+    ("user", "학생이 {topic}에 대해 질문합니다.")
 ])
 
 finalPrompt = chatPrompt.format_messages(topic="오프사이드 규칙")
