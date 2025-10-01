@@ -17,6 +17,8 @@ than both the ball and the second-last opponent at the moment the ball is played
 However, being in an offside position is not an offense by itself; the player must also be involved in active play.
 """
 
+
+
 ragPrompt = f"""
 [Context]
 {context}
