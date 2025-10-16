@@ -21,7 +21,7 @@ template = """
 학생이 '{topic}'에 대해 묻습니다. 친절하게 설명해주세요.
 """
 
-prompt = PromptTemplate.from_template(template)   # 문자열을 LangChain이 이해할 수 있는 PromptTemplate 객체로 변환하는 메서드
+prompt = PromptTemplate.from_template(template)  # 문자열을 LangChain이 이해할 수 있는 PromptTemplate 객체로 변환하는 메서드
 finalPrompt = prompt.format(topic="축구에서의 오프사이드 규칙")
 
 response = llm.invoke(finalPrompt)
