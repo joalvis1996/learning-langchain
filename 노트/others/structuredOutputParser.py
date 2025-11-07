@@ -36,6 +36,6 @@ response = chain.invoke({"question": "EPL의 아스날 역대 득점 1위 선수
 
 print(response)
 
-# 실행 결과
+## 실행 결과
 # {'answer': 'EPL의 아스날 역대 득점 1위 선수는 티에리 앙리(Thierry Henry)입니다. 그는 아스날에서 총 228골을 기록했습니다.', 'source': 'https://www.arsenal.com/club/history/greatest-players/thierry-henry'}
  
