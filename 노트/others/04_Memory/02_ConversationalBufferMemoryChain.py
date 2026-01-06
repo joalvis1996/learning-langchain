@@ -24,7 +24,6 @@ print("A1: ", response_01)
 ## 실행 결과
 #  안녕하세요, 홍길동님! 만나서 정말 반갑습니다! 저는 구글에서 훈련한 대규모 언어 모델인 AI입니다. 이렇게 홍길동님과 대화를 시작하게 되어서 정말 기뻐요!
 
-
 response_02 = conversation.predict(input="내 이름이 뭐라고?")
 print("A2: ", response_02)
 
