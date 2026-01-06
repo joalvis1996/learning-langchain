@@ -1,4 +1,3 @@
-## pip install langchain-google-genai python-dotenv
 import os
 from langchain_google_genai import ChatGoogleGenerativeAI
 from dotenv import load_dotenv
