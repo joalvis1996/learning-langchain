@@ -45,7 +45,6 @@ print("응답:", response4)
 print("=== 저장된 메모리 (요약) ===")
 print(memory.load_memory_variables({}))
 
-
 ## 실행 결과
 
 # 첫 번째 대화
