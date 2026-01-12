@@ -44,4 +44,3 @@ chain = prompt | llm | parser
 response = chain.invoke({"player": "빅터 요케레스"})
 
 print(response)
- 
