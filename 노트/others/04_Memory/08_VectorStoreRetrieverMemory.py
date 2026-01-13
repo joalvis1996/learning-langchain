@@ -12,7 +12,6 @@ from pinecone import Pinecone
  
 load_dotenv()
 
-
 # LLM 설정
 script_dir = Path(__file__).parent
 json_path = script_dir.parent / "ch_3_Model" / "geminiLLM.json"
