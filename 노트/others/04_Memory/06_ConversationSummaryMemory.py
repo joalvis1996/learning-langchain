@@ -24,6 +24,7 @@ conversation = ConversationChain(
     verbose=True
 )
 
+
 # 여러 대화를 진행하면서 요약이 어떻게 생성되는지 확인
 # 첫 번째 대화 
 response1 = conversation.predict(input="안녕, 내 이름은 홍길동이야. 나는 서울에 살고 있어.")
