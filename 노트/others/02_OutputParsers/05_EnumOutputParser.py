@@ -17,7 +17,6 @@ llm = ChatGoogleGenerativeAI(
     google_api_key=apiKey
 )
 
-
 # Enum 정의
 class Level(Enum):
     WORLDCLASS = "세계 최고의 선수"
