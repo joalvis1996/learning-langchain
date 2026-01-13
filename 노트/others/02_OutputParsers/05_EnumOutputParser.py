@@ -23,9 +23,7 @@ class Level(Enum):
     INTERNATONAL = "국제적인 선수"
     NATIONAL = "국내 최고의 선수"
 
-
 parser = EnumOutputParser(enum=Level)
-
 prompt = PromptTemplate(
     template=(
         "다음 축구 선수의 실력을 아래 지침대로 분류하세요.\n"
