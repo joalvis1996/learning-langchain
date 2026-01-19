@@ -17,7 +17,6 @@ def subgraph_node(state: SubgraphState):
     # 서브그래프 노드는 공유 키인 "foo"를 사용해 부모 그래프와 통신한다
     return {"foo": state["foo"] + "bar"}
 
-
 subgraph_builder = StateGraph(SubgraphState)
 subgraph_builder.add_node("subgraph_node", subgraph_node)
 subgraph_builder.add_edge(START, "subgraph_node")
