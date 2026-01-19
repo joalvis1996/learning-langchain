@@ -20,7 +20,6 @@ subgraph_builder.add_edge(START, "subgraph_node")
 # 서브그래프에 필요한 추가 설정은 여기에 작성
 subgraph = subgraph_builder.compile()
 
-
 # 서브그래프를 호출하는 부모 그래프 정의
 def node(state: State):
     # 부모 그래프의 상태를 서브그래프 상태로 변환
