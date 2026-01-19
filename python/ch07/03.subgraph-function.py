@@ -14,7 +14,6 @@ class SubgraphState(TypedDict):
 def subgraph_node(state: SubgraphState):
     return {"bar": state["bar"] + "baz"}
 
-
 subgraph_builder = StateGraph(SubgraphState)
 subgraph_builder.add_node("subgraph_node", subgraph_node)
 subgraph_builder.add_edge(START, "subgraph_node")
