@@ -19,7 +19,6 @@ search = DuckDuckGoSearchRun()
 tools = [search, calculator]
 model = ChatOpenAI(model='gpt-4o-mini', temperature=0.1).bind_tools(tools)
 
-
 class State(TypedDict):
     messages: Annotated[list, add_messages]
 
