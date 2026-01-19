@@ -28,6 +28,7 @@ def model_node(state: State) -> State:
     return {'messages': res}
 
 
+
 builder = StateGraph(State)
 builder.add_node('model', model_node)
 builder.add_node('tools', ToolNode(tools))
