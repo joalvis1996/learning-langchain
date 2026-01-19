@@ -24,7 +24,6 @@ FINISH로 응답하세요.'''
 
 system_prompt_part_2 = f'''위 대화를 바탕으로, 다음으로 행동할 서브에이전트는 누구입니까? 아니면 FINISH 해야 합니까? 서브에이전트: {', '.join(agents)}, FINISH'''
 
-
 def supervisor(state):
     messages = [
         ('system', system_prompt_part_1),
