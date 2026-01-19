@@ -11,7 +11,6 @@ class SubgraphState(TypedDict):
     foo: str  # 부모 그래프와 이 키를 공유
     bar: str
 
-
 # 서브그래프 정의
 def subgraph_node(state: SubgraphState):
     # 서브그래프 노드는 공유 키인 "foo"를 사용해 부모 그래프와 통신한다
