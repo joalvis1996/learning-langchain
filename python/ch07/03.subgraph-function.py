@@ -27,7 +27,6 @@ def node(state: State):
     # 응답을 다시 부모 그래프의 상태로 변환
     return {"foo": response["bar"]}
 
-
 builder = StateGraph(State)
 # 서브그래프 대신 `node`를 지정
 builder.add_node("node", node)
