@@ -9,7 +9,6 @@ from langgraph.graph import START, StateGraph
 from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode, tools_condition
 
-
 @tool
 def calculator(query: str) -> str:
     '''계산기. 수식만 입력받습니다.'''
