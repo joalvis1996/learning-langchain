@@ -9,7 +9,6 @@ markdown_text = '''
 ```bash
 pip install langchain
 ```
-
 As an open source project in a rapidly developing field, we are extremely open
     to contributions.
 '''
