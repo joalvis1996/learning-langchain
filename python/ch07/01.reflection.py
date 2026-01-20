@@ -10,6 +10,7 @@ from langchain_openai import ChatOpenAI
 from langgraph.graph import END, START, StateGraph
 from langgraph.graph.message import add_messages
 
+
 model = ChatOpenAI(model='gpt-4o-mini')
 
 # 상태 타입 정의
