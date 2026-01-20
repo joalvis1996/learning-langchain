@@ -16,7 +16,6 @@ model = model.with_structured_output(SupervisorDecision)
 # 사용 가능한 에이전트 정의
 agents = ['researcher', 'coder']
 
-
 # 시스템 프롬프트 정의
 system_prompt_part_1 = f'''당신은 다음 서브에이전트 사이의 대화를 관리하는 슈퍼바이저입니다. 서브에이전트: {agents}. 아래 사용자 요청에 따라,  
 다음으로 행동할 서브에이전트를 지목하세요. 각 서브에이전트는 임무를 수행하고 결과와 상태를 응답합니다. 실행할 서브에이전트가 없거나 작업이 완료되면,  
