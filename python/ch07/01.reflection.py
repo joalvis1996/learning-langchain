@@ -17,6 +17,7 @@ model = ChatOpenAI(model='gpt-4o-mini')
 class State(TypedDict):
     messages: Annotated[list[BaseMessage], add_messages]
 
+
 # 프롬프트 정의
 generate_prompt = SystemMessage(
     '당신은 훌륭한 3단락 에세이를 작성하는 임무를 가진 에세이 어시스턴트입니다.'
