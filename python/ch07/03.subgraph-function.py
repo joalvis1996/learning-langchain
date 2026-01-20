@@ -9,7 +9,6 @@ class SubgraphState(TypedDict):
     bar: str
     baz: str
 
-
 # 서브그래프 정의
 def subgraph_node(state: SubgraphState):
     return {"bar": state["bar"] + "baz"}
