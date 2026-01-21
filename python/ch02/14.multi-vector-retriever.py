@@ -32,6 +32,7 @@ chunks = splitter.split_documents(docs)
 prompt_text = '다음 문서의 요약을 생성하세요:\n\n{doc}'
 
 
+
 prompt = ChatPromptTemplate.from_template(prompt_text)
 llm = ChatOpenAI(temperature=0, model='gpt-4o-mini')
 summarize_chain = {
