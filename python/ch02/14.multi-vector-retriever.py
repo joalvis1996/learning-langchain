@@ -21,6 +21,7 @@ embeddings_model = OpenAIEmbeddings()
 loader = TextLoader('./test.txt', encoding='utf-8')
 docs = loader.load()
 
+
 print('length of loaded docs: ', len(docs[0].page_content))
 
 # 문서 분할
