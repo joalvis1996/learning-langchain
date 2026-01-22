@@ -36,6 +36,7 @@ summarize_chain = {
 
 summaries = summarize_chain.batch(chunks, {'max_concurrency': 5})
 
+
 # 벡터 저장소는 하위 청크를 인덱싱하는 데 사용
 vectorstore = PGVector(
     embeddings=embeddings_model,
