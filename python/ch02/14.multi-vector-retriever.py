@@ -67,6 +67,7 @@ summary_docs = [
 # 유사도 검색을 위해 벡터 저장소에 문서 요약을 추가
 retriever.vectorstore.add_documents(summary_docs)
 
+
 # doc_ids를 통해 요약과 연결된 원본 문서를 문서 저장소에 저장
 # 이를 통해 먼저 요약을 효율적으로 검색한 다음, 필요할 때 전체 문서를 가져옴
 retriever.docstore.mset(list(zip(doc_ids, chunks)))
