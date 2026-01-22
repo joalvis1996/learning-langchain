@@ -77,7 +77,6 @@ sub_docs = retriever.vectorstore.similarity_search(
     'chapter on philosophy', k=2)
 
 print('sub docs: ', sub_docs[0].page_content)
-
 print('length of sub docs:\n', len(sub_docs[0].page_content))
 
 # retriever는 더 큰 원본 문서 청크를 반환
