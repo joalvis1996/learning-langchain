@@ -16,11 +16,9 @@ connection = 'postgresql+psycopg://langchain:langchain@localhost:6024/langchain'
 collection_name = 'summaries'
 embeddings_model = OpenAIEmbeddings()
 
-
 # 문서 로드
 loader = TextLoader('./test.txt', encoding='utf-8')
 docs = loader.load()
-
 
 print('length of loaded docs: ', len(docs[0].page_content))
 
