@@ -36,7 +36,6 @@ summarize_chain = {
 
 summaries = summarize_chain.batch(chunks, {'max_concurrency': 5})
 
-
 # 벡터 저장소는 하위 청크를 인덱싱하는 데 사용
 vectorstore = PGVector(
     embeddings=embeddings_model,
@@ -54,6 +53,7 @@ retriever = MultiVectorRetriever(
     docstore=store,
     id_key=id_key,
 )
+
 
 # 문서와 동일한 길이가 필요하므로 summaries에서 chunks로 변경
 doc_ids = [str(uuid.uuid4()) for _ in chunks]
