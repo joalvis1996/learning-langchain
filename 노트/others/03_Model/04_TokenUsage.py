@@ -7,6 +7,7 @@ load_dotenv()
 
 with open("geminiLLM.json", "r", encoding="utf-8") as f:
     data = json.load(f)
+    
 
 
 llm = load(data)
