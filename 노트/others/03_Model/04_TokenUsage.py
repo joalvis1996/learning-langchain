@@ -12,6 +12,7 @@ with open("geminiLLM.json", "r", encoding="utf-8") as f:
 
 llm = load(data)
 
+
 response = llm.invoke("너는 누구니")
 print(response.usage_metadata)
 
