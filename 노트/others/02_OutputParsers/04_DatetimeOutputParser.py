@@ -5,6 +5,7 @@ from langchain.output_parsers import DatetimeOutputParser
 from langchain_core.prompts import PromptTemplate
 from langchain_google_genai import ChatGoogleGenerativeAI
 
+
 # 환경 변수 로드
 load_dotenv()
 apiKey = os.getenv("GOOGLE_API_KEY")
