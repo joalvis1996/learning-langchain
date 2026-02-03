@@ -17,7 +17,6 @@ llm = ChatGoogleGenerativeAI(
 )
 
 parser = DatetimeOutputParser()
-
 prompt = PromptTemplate(
     template="{question}\n"
     "{instructions}",
