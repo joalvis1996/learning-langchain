@@ -5,7 +5,6 @@ from langchain_core.prompts import PromptTemplate
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.output_parsers import CommaSeparatedListOutputParser
 
-
 # 환경 변수 로드
 load_dotenv()
 apiKey = os.getenv("GOOGLE_API_KEY")
