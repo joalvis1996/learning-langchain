@@ -12,6 +12,7 @@ llm = ChatGoogleGenerativeAI(
 )
 
 
+
 fewShotPrompt = """
 You are a soccer coach. Explain rules simply.
 
