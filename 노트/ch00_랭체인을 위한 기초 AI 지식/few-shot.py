@@ -25,5 +25,6 @@ Q: What is the offside rule in soccer?
 A:
 """
 
+
 response = llm.invoke(fewShotPrompt)
 print(response.content)
